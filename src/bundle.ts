@@ -47,6 +47,8 @@ export function decodeAttachment(a: Attachment): string {
 }
 
 export interface ExtractedBundle {
+  /** The rules workspace, the input of the blocks-to-TypeScript conversion (`emitWorkspace`). */
+  workspace: Workspace;
   /** One file per spatial map, named as in the bundle (e.g. `MP_Plaza_Rush.spatial.json`), contents exactly as encoded. */
   spatial: { filename: string; text: string; mapIdx: number | undefined }[];
   /** The `mutators` object, unchanged. */
@@ -76,6 +78,7 @@ export function extractBundle(b: Bundle): ExtractedBundle {
   };
   if (b.assetRestrictions) experience.assetRestrictions = b.assetRestrictions;
   return {
+    workspace: b.workspace,
     spatial: b.attachments.map((a) => ({ filename: a.filename, text: decodeAttachment(a), mapIdx: mapIdx(a) })),
     mutators: b.mutators,
     experience,

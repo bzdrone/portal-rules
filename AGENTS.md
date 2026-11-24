@@ -66,7 +66,7 @@ Reuse these instead of writing throwaway scripts (`tmp/` is gitignored scratch o
 | `npm run emit -- <workspace.json> <out-base>` | convert one workspace to `<out-base>.ts` and `.strings.json` |
 | `npm run typecheck:out -- <file.ts>` | type-check generated output against the SDK typings and modlib, with source context |
 | `npm run survey -- [--all] [files]` | block-type census: counts, inputs, fields, extraState |
-| `npm run extract -- <bundle.json> [out-dir] [--name base]` | split an experience bundle into `<map>.spatial.json` (byte-exact), `mutators.json` and `experience.json` (name, teams, map rotation, no map data); with `--name`, only `<base>.spatial.json` and `<base>.mutators.json` (the golden layout) |
+| `npm run extract -- <bundle.json> [out-dir] [--name base]` | split an experience bundle into `workspace.json` (the rules), `<map>.spatial.json` (byte-exact), `mutators.json` and `experience.json` (name, teams, map rotation, no map data); with `--name`, only `<base>.spatial.json` and `<base>.mutators.json` (the golden layout) |
 | `npm run gen:sdk` | regenerate `src/generated/sdk.ts` from the SDK |
 | `node scripts/gdiff.mjs ours.ts golden.ts [unitRegex]` | low-level unit diff (`MASK_VARS=1`, `N`) |
 
@@ -75,5 +75,5 @@ Add new templates or goldens in `scripts/cases.mjs` (the tests and `compare` bot
 - EA's own exports fail the type-check (22 errors Conquest, 269 Breakthrough); ours must stay at 0.
 - Write regex-heavy files with the Write/Edit tools: backslashes in shell heredocs and `node -e` get eaten.
 - Inputs are visited in editor order (`orderedInputs` in `src/workspace.ts`), never JSON key order: bundles store keys alphabetically.
-- Experience bundles (`golden/*/custom*_bundle.json`) embed the workspace under `workspace`; `parseWorkspace` accepts both forms.
+- Two separate steps: (1) extract a bundle (`golden/*/custom*_bundle.json`, an experience export) into workspace, spatial map, mutators and experience info with `src/bundle.ts`; (2) convert a workspace to TypeScript with `src/emit.ts`. `parseWorkspace` takes a bare workspace only; use `extractBundle(...).workspace` for a bundle.
 - `src/bundle.ts` models the experience bundle: `parseBundle`, `extractBundle`, `decodeAttachment`. Spatial maps are base64 UTF-8 JSON in `attachments[].attachmentData.original` (`mapRotation` repeats the same attachments). Conquest and Breakthrough bundles only set `MaxPlayerCount_PerTeam` and `MaxTeamCount`; Rush also sets `AiSpawnType`, `FactionID_PerTeam`, `ScoreboardType`, `AI_ManDownExperienceType_PerTeam`. The decoded spatial maps differ from the SDK copies of the same maps (different edits or SDK version).

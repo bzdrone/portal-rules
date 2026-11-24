@@ -33,12 +33,11 @@ export interface Workspace {
 }
 
 /**
- * Parses a rules workspace. Accepts either a bare workspace (`{ mod: ... }`, as in the SDK templates) or an
- * experience bundle (`{ name, mutators, mapRotation, workspace: { mod: ... }, ... }`).
+ * Parses a rules workspace (`{ mod: { blocks, variables } }`, as in the SDK templates). An experience bundle is a
+ * different file: extract its workspace first (`extractBundle` in bundle.ts).
  */
 export function parseWorkspace(json: string): Workspace {
-  let w = JSON.parse(json) as Workspace & { workspace?: Workspace };
-  if (!w?.mod && w?.workspace?.mod) w = w.workspace;
+  const w = JSON.parse(json) as Workspace;
   if (!w?.mod?.blocks?.blocks) throw new Error("Not a Portal workspace: missing mod.blocks.blocks");
   w.mod.variables ??= [];
   return w;

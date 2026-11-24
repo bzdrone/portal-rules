@@ -3,7 +3,8 @@
 // Usage: npm run extract -- <bundle.json> [out-dir] [--name <base>]
 //   default out-dir: tmp/<bundle file name>
 //
-// Without --name: <map>.spatial.json for each attached map (named as in the bundle), mutators.json, experience.json.
+// Without --name: workspace.json (the rules, input of the conversion step), <map>.spatial.json for each attached map
+//                 (named as in the bundle), mutators.json, experience.json.
 // With --name:    <base>.spatial.json (<base>.<mapIdx>.spatial.json when there are several maps) and <base>.mutators.json only,
 //                 the layout used in golden/<mode>/.
 // Spatial files are written exactly as encoded in the bundle.
@@ -35,4 +36,7 @@ parts.spatial.forEach((s, i) => {
   write(file, s.text);
 });
 write(base ? `${base}.mutators.json` : "mutators.json", `${JSON.stringify(parts.mutators, null, 2)}\n`);
-if (!base) write("experience.json", `${JSON.stringify(parts.experience, null, 2)}\n`);
+if (!base) {
+  write("experience.json", `${JSON.stringify(parts.experience, null, 2)}\n`);
+  write("workspace.json", JSON.stringify(parts.workspace));
+}

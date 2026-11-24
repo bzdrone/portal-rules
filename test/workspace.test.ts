@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { extractBundle, parseBundle } from "../src/bundle.js";
 import { emitWorkspace } from "../src/emit.js";
 import { blockTypeCounts, parseWorkspace } from "../src/workspace.js";
 
@@ -32,7 +33,8 @@ describe.skipIf(!existsSync(mods))("experience bundles", () => {
     ["rush", "rush/customrush_bundle.json", templates.rush],
   ];
   it.each(bundles)("%s bundle converts like its SDK template", (_name, bundle, template) => {
-    const fromBundle = emitWorkspace(parseWorkspace(readFileSync(join(import.meta.dirname, "../golden", bundle), "utf8")));
+    const extracted = extractBundle(parseBundle(readFileSync(join(import.meta.dirname, "../golden", bundle), "utf8")));
+    const fromBundle = emitWorkspace(extracted.workspace);
     const fromTemplate = emitWorkspace(parseWorkspace(readFileSync(join(mods, template), "utf8")));
     expect(fromBundle.ts).toEqual(fromTemplate.ts);
     expect(fromBundle.strings).toEqual(fromTemplate.strings);
