@@ -65,3 +65,18 @@ describe.each(bundles)("%s bundle", (_name, file, mutators, spatialName) => {
 it("rejects a plain workspace as a bundle", () => {
   expect(() => parseBundle(JSON.stringify({ mod: { blocks: { blocks: [] } } }))).toThrow(/experience bundle/);
 });
+
+// golden/<mode>/<mode>.spatial.json and .mutators.json are extracted from the bundle (npm run extract -- ... --name <mode>); keep them in sync.
+describe.each(bundles)("%s golden files", (name, file) => {
+  const bundle = parseBundle(readFileSync(join(golden, file), "utf8"));
+  const parts = extractBundle(bundle);
+  const dir = join(golden, name);
+
+  it("has the spatial map extracted byte for byte", () => {
+    expect(readFileSync(join(dir, `${name}.spatial.json`), "utf8")).toBe(parts.spatial[0].text);
+  });
+
+  it("has the mutators extracted", () => {
+    expect(JSON.parse(readFileSync(join(dir, `${name}.mutators.json`), "utf8"))).toEqual(parts.mutators);
+  });
+});
