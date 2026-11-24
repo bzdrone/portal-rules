@@ -14,7 +14,8 @@
     "gen:sdk": "node scripts/gen-sdk.mjs",
     "typecheck:out": "node scripts/typecheck.mjs",
     "compare": "tsx scripts/compare.ts",
-    "survey": "node scripts/survey.mjs"
+    "survey": "node scripts/survey.mjs",
+    "extract": "tsx scripts/extract.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.7",
