@@ -30,6 +30,8 @@ export function norm(s, { maskVars = false, strictEventInfo = false } = {}) {
       .replace(new RegExp(`${NAME}+?(Global|Player|Team|CapturePoint|MCOM|Vehicle)Var(?!${NAME})`, "g"), "VAR$1")
       .replace(new RegExp(`${NAME}+Var(?!${NAME})`, "g"), "LOOPVAR");
   }
+  // modlib.And is the variadic form of mod.And (divergence #14).
+  out = out.replaceAll("modlib.And(", "mod.And(");
   out = flattenNary(out);
   if (maskVars) out = maskObjectVariableIndex(out);
   return out;

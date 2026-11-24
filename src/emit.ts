@@ -182,10 +182,9 @@ export function expr(b: Block, ctx: Ctx): string {
     return `modlib.FilteredArray(${arr},(currentArrayElement: any) => mod.NotEqualTo(currentArrayElement,${x}))`;
   }
   if (!MOD_FUNCTIONS.has(b.type)) ctx.diagnostics.push(`unknown block type ${b.type}`);
-  // mod.And / mod.Or take exactly two arguments; EA emits them variadic.
-  if ((b.type === "And" || b.type === "Or") && valueInputs(b).length > 2) {
-    return args(b, ctx).reduce((a, c) => `mod.${b.type}(${a},${c})`);
-  }
+  // mod.And / mod.Or take exactly two arguments; EA emits them variadic. modlib.And is variadic, modlib has no Or.
+  if (b.type === "And" && valueInputs(b).length > 2) return `modlib.And(${args(b, ctx).join(",")})`;
+  if (b.type === "Or" && valueInputs(b).length > 2) return args(b, ctx).reduce((a, c) => `mod.Or(${a},${c})`);
   return `mod.${b.type}(${args(b, ctx).join(",")})`;
 }
 
@@ -269,7 +268,7 @@ function conditionExpr(first: Block | undefined, ctx: Ctx): string | undefined {
     return expr(e, ctx);
   });
   if (conds.length === 0) return undefined;
-  return conds.reduce((a, c) => `mod.And(${a},${c})`);
+  return conds.length === 1 ? conds[0] : conds.length === 2 ? `mod.And(${conds[0]},${conds[1]})` : `modlib.And(${conds.join(",")})`;
 }
 
 interface Rule {
