@@ -9,10 +9,13 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "emit": "tsx scripts/emit.ts",
+    "gen:sdk": "node scripts/gen-sdk.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.7",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }
