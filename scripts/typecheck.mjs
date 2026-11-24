@@ -1,7 +1,6 @@
 // Type-check generated Portal scripts against the SDK typings and modlib.
 // CLI: node scripts/typecheck.mjs <file.ts> [more files]   (env PORTAL_SDK, N=<errors to print>)
-import { mkdtempSync, copyFileSync, writeFileSync, readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync, mkdtempSync, copyFileSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { join, basename } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -10,7 +9,10 @@ const tsc = join(import.meta.dirname, "../node_modules/typescript/bin/tsc");
 /** Returns tsc's error lines for a generated script ("script.ts(line,col): error TSxxxx: ..."). */
 export function typecheck(file, sdkPath = process.env.PORTAL_SDK ?? "C:/PortalSDK") {
   const sdk = sdkPath.replaceAll("\\", "/");
-  const dir = mkdtempSync(join(tmpdir(), "portal-check-"));
+  // Scratch space lives in the project (gitignored tmp/), not the system temp directory.
+  const scratch = join(import.meta.dirname, "../tmp");
+  mkdirSync(scratch, { recursive: true });
+  const dir = mkdtempSync(join(scratch, "portal-check-"));
   try {
     copyFileSync(file, join(dir, "script.ts"));
     writeFileSync(

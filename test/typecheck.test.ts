@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { emitWorkspace } from "../src/emit.js";
 import { parseWorkspace } from "../src/workspace.js";
@@ -14,7 +13,9 @@ describe.skipIf(!existsSync(modsPath()))("generated TypeScript compiles against 
   it.each(cases.map((c: { name: string; input: string }) => [c.name, c.input]))("%s", (name: string, input: string) => {
     const { ts, diagnostics } = emitWorkspace(parseWorkspace(readFileSync(join(modsPath(), input), "utf8")));
     expect(diagnostics).toEqual([]);
-    const file = join(mkdtempSync(join(tmpdir(), "pr-")), `${name}.ts`);
+    const scratch = join(import.meta.dirname, "../tmp");
+    mkdirSync(scratch, { recursive: true });
+    const file = join(mkdtempSync(join(scratch, "pr-")), `${name}.ts`);
     writeFileSync(file, ts);
     expect(typecheck(file)).toEqual([]);
   }, 120_000);
