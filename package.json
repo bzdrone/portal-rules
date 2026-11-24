@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "emit": "tsx scripts/emit.ts",
     "gen:sdk": "node scripts/gen-sdk.mjs",
-    "typecheck:out": "node scripts/typecheck.mjs"
+    "typecheck:out": "node scripts/typecheck.mjs",
+    "compare": "tsx scripts/compare.ts",
+    "survey": "node scripts/survey.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.7",

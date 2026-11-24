@@ -1,6 +1,6 @@
 // Type-check generated Portal scripts against the SDK typings and modlib.
 // CLI: node scripts/typecheck.mjs <file.ts> [more files]   (env PORTAL_SDK, N=<errors to print>)
-import { mkdtempSync, copyFileSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, copyFileSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, basename } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -37,6 +37,16 @@ if (process.argv[1]?.endsWith("typecheck.mjs")) {
     const byCode = {};
     for (const l of lines) { const c = /error (TS\d+)/.exec(l)[1]; byCode[c] = (byCode[c] ?? 0) + 1; }
     console.log(`${basename(file)}: ${lines.length} errors ${JSON.stringify(byCode)}`);
-    for (const l of lines.slice(0, Number(process.env.N ?? 8))) console.log("  " + l.slice(0, 220));
+    // Show each distinct error once, with the source text at the error position.
+    const src = readFileSync(file, "utf8").split("\n");
+    const seen = new Set();
+    for (const l of lines) {
+      const m = /script\.ts\((\d+),(\d+)\): error (TS\d+): (.*)/.exec(l);
+      const at = m ? src[Number(m[1]) - 1]?.slice(Number(m[2]) - 1, Number(m[2]) + 80).trim() : "";
+      const key = m ? `${m[3]}${at.slice(0, 40)}` : l;
+      if (seen.has(key) || seen.size >= Number(process.env.N ?? 8)) continue;
+      seen.add(key);
+      console.log(m ? `  ${m[1]}:${m[2]} ${m[3]} ${m[4].slice(0, 120)}\n      ${at}` : `  ${l}`);
+    }
   }
 }

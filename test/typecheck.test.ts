@@ -4,23 +4,18 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { emitWorkspace } from "../src/emit.js";
 import { parseWorkspace } from "../src/workspace.js";
-// @ts-expect-error plain JS helper shared with the CLI
+// @ts-expect-error plain JS helpers shared with the CLI tools
 import { typecheck } from "../scripts/typecheck.mjs";
-
-const sdk = process.env.PORTAL_SDK ?? "C:/PortalSDK";
-const mods = join(sdk, "GodotProject/mods");
+// @ts-expect-error plain JS
+import { cases, modsPath } from "../scripts/cases.mjs";
 
 // The generated scripts must compile against the SDK's mod typings and modlib (EA's own exports do not: see docs/divergences.md).
-describe.skipIf(!existsSync(mods))("generated TypeScript compiles against the Portal SDK", () => {
-  it.each([
-    ["conquest", "CustomCQ/conquest_template_14.0.json"],
-    ["breakthrough", "CustomBT/custom_breakthrough_template_V5.0.json"],
-    ["rush", "CustomRush/rush_template_4.0.json"],
-    ["hybrid", "HybridExample/HybridExample.workspace.json"],
-  ])("%s", (name, rel) => {
-    const { ts } = emitWorkspace(parseWorkspace(readFileSync(join(mods, rel), "utf8")));
+describe.skipIf(!existsSync(modsPath()))("generated TypeScript compiles against the Portal SDK", () => {
+  it.each(cases.map((c: { name: string; input: string }) => [c.name, c.input]))("%s", (name: string, input: string) => {
+    const { ts, diagnostics } = emitWorkspace(parseWorkspace(readFileSync(join(modsPath(), input), "utf8")));
+    expect(diagnostics).toEqual([]);
     const file = join(mkdtempSync(join(tmpdir(), "pr-")), `${name}.ts`);
     writeFileSync(file, ts);
-    expect(typecheck(file, sdk)).toEqual([]);
+    expect(typecheck(file)).toEqual([]);
   }, 120_000);
 });

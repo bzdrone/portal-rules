@@ -57,8 +57,19 @@ Format facts (from the templates, ~215 distinct block types in total):
 
 ### Tooling
 
-- `npm test`; `npm run emit -- <workspace.json> <out-base>` writes `<out-base>.ts` and `.strings.json`; `npm run gen:sdk` regenerates `src/generated/sdk.ts` from the SDK.
-- Compare with a golden file: `node scripts/gdiff.mjs ours.ts golden.ts [unitRegex]` (`MASK_VARS=1`, `N=<count>`). It splits both files into top-level units and ignores whitespace, variable indices and the known divergences.
-- Golden files: `golden/conquest` (customcq) and `golden/custombt` (variable table polluted, see `golden/README.md`).
-- Shell/tooling note: backslashes in heredocs and `node -e` can be eaten; write regex-heavy files with the Write/Edit tools.
-- Type-check generated output against the SDK typings and modlib: `npm run typecheck:out -- <file.ts>` (also enforced by `test/typecheck.test.ts` for all templates). EA's own exports fail this check (22 errors Conquest, 269 Breakthrough); ours must stay at 0.
+Reuse these instead of writing throwaway scripts (`tmp/` is gitignored scratch only).
+
+| Command | Does |
+|---|---|
+| `npm test` | vitest: parsing, golden comparison, type-check of every template |
+| `npm run compare -- [case]` | emit each template in `scripts/cases.mjs`, type-check, compare with golden; env `N`, `UNIT=<re>`, `OUT`, `NOTYPES` |
+| `npm run emit -- <workspace.json> <out-base>` | convert one workspace to `<out-base>.ts` and `.strings.json` |
+| `npm run typecheck:out -- <file.ts>` | type-check generated output against the SDK typings and modlib, with source context |
+| `npm run survey -- [--all] [files]` | block-type census: counts, inputs, fields, extraState |
+| `npm run gen:sdk` | regenerate `src/generated/sdk.ts` from the SDK |
+| `node scripts/gdiff.mjs ours.ts golden.ts [unitRegex]` | low-level unit diff (`MASK_VARS=1`, `N`) |
+
+Add new templates or goldens in `scripts/cases.mjs` (the tests and `compare` both read it). Keep known divergences there in sync with `docs/divergences.md`.
+
+- EA's own exports fail the type-check (22 errors Conquest, 269 Breakthrough); ours must stay at 0.
+- Write regex-heavy files with the Write/Edit tools: backslashes in shell heredocs and `node -e` get eaten.

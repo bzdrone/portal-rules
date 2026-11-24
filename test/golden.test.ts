@@ -3,55 +3,18 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { emitWorkspace } from "../src/emit.js";
 import { parseWorkspace } from "../src/workspace.js";
-// @ts-expect-error plain JS helper shared with the CLI diff tool
+// @ts-expect-error plain JS helpers shared with the CLI tools
 import { units } from "../scripts/gdiff.mjs";
+// @ts-expect-error plain JS
+import { cases as allCases, isVarDecl } from "../scripts/cases.mjs";
 
 const sdk = process.env.PORTAL_SDK ?? "C:/PortalSDK";
 const mods = join(sdk, "GodotProject/mods");
 const golden = join(import.meta.dirname, "../golden");
 
-interface Case {
-  name: string;
-  input: string;
-  dir: string;
-  file: string;
-  /** Golden's variable table is unreliable: ignore variable names and declarations. */
-  maskVars?: boolean;
-  /** Units that intentionally differ from EA's output; each is explained in docs/divergences.md. */
-  known: string[];
-  /** Units only we emit (not present in the golden file). */
-  extra?: string[];
-}
-
-const cases: Case[] = [
-  {
-    name: "customcq",
-    input: "CustomCQ/conquest_template_14.0.json",
-    dir: "conquest",
-    file: "customcq",
-    known: ["OutOfBounds"], // #1 #3 #4
-  },
-  {
-    name: "custombt",
-    input: "CustomBT/custom_breakthrough_template_V5.0.json",
-    dir: "custombt",
-    file: "custombt",
-    maskVars: true, // golden/README.md: this export has a polluted variable table
-    known: [
-      "OnGameModeStarted_Game_Started_Action", // #12 sort comparator
-      "OngoingGlobal_Change_Sector_Action", // #3 negative step
-      "OngoingGlobal_Reinforcments_UI_Animation_Action", // #3
-      "OOB_Logic", // #3 (+ #1)
-      "OngoingEmplacementSpawner", // #11 missing modlib getter
-    ],
-    extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition", "SortedModArray"],
-  },
-];
-
-const isVarDecl = (name: string) => name.endsWith("Var") || name.startsWith("//");
 
 describe.skipIf(!existsSync(mods))("EA golden outputs", () => {
-  for (const c of cases) {
+  for (const c of allCases.filter((c: { dir?: string }) => c.dir)) {
     describe(c.name, () => {
       const result = emitWorkspace(parseWorkspace(readFileSync(join(mods, c.input), "utf8")));
       const opts = { maskVars: !!c.maskVars };
@@ -80,9 +43,4 @@ describe.skipIf(!existsSync(mods))("EA golden outputs", () => {
       });
     });
   }
-
-  it("emits the Rush template without diagnostics", () => {
-    const r = emitWorkspace(parseWorkspace(readFileSync(join(mods, "CustomRush/rush_template_4.0.json"), "utf8")));
-    expect(r.diagnostics).toEqual([]);
-  });
 });
