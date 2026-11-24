@@ -32,6 +32,8 @@ export function norm(s, { maskVars = false, strictEventInfo = false } = {}) {
   }
   // modlib.And is the variadic form of mod.And (divergence #14).
   out = out.replaceAll("modlib.And(", "mod.And(");
+  // Which condition state an event rule gets (edge-triggered per object vs none) is divergence #5; compare the rest of dispatch.
+  out = out.replace(/(?:modlib\.)?get[A-Za-z]*Condition\([^():]*\)/g, "COND").replace(/leteventNum=\d+/g, "");
   out = flattenNary(out);
   if (maskVars) out = maskObjectVariableIndex(out);
   return out;

@@ -358,9 +358,12 @@ export function emitWorkspace(ws: Workspace): EmitResult {
     if (!groups.has(event)) groups.set(event, []);
     groups.get(event)!.push(rule);
   }
-  // Numbers are assigned in dispatch order (grouped by event, groups in first-appearance order).
+  // Only Ongoing rules are edge triggered ("when the condition becomes true") and need a state slot per object.
+  // Event rules run whenever their event fires and their conditions hold. Numbers are assigned in dispatch order
+  // (grouped by event, groups in first-appearance order).
   for (const group of groups.values())
     for (const r of group) {
+      if (!r.event.startsWith("Ongoing")) continue;
       r.condNum = counters.get(r.kind) ?? 0;
       counters.set(r.kind, r.condNum + 1);
     }
@@ -412,8 +415,9 @@ export function emitWorkspace(ws: Workspace): EmitResult {
     const params = group[0].params;
     const kind = group[0].kind;
     const sig = params.map((p) => `${p.name}: mod.${p.type}`).join(", ");
+    const edgeTriggered = event.startsWith("Ongoing");
     let getter = "modlib.getGlobalCondition";
-    if (kind !== "global") {
+    if (edgeTriggered && kind !== "global") {
       if (CONDITION_GETTER[kind]) getter = `modlib.${CONDITION_GETTER[kind]}`;
       else {
         getter = `get${kind}Condition`;
@@ -421,15 +425,10 @@ export function emitWorkspace(ws: Workspace): EmitResult {
       }
     }
     const first = kind === "global" ? "" : `${params[0].name}, `;
-    const lines = group.map((r) => `  ${r.fn}(${getter}(${first}eventNum++)${params.length ? ", eventInfo" : ""});`);
-    dispatch.push(
-      `export function ${event}(${sig}) {
-const eventInfo = {${params.map((p) => p.name).join(", ")}};
-let eventNum = ${group[0].condNum};
-${lines.join("\n")}
-}
-`,
-    );
+    const state = (): string => (edgeTriggered ? `${getter}(${first}eventNum++)` : "modlib.getSimpleCondition()");
+    const lines = group.map((r) => `  ${r.fn}(${state()}${params.length ? ", eventInfo" : ""});`);
+    const counter = edgeTriggered ? `let eventNum = ${group[0].condNum};\n` : "";
+    dispatch.push(`export function ${event}(${sig}) {\nconst eventInfo = {${params.map((p) => p.name).join(", ")}};\n${counter}${lines.join("\n")}\n}\n`);
   }
   const helpers: string[] = [];
   for (const name of ctx.helpers) helpers.push(HELPERS[name]);

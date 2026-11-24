@@ -32,7 +32,6 @@ export const cases = [
       "OngoingGlobal_Change_Sector_Action", // #3 negative step
       "OngoingGlobal_Reinforcments_UI_Animation_Action", // #3
       "OOB_Logic", // #3 (+ #1)
-      "OngoingEmplacementSpawner", // #11 missing modlib getter
     ],
     extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition", "SortedModArray"],
   },
