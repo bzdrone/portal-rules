@@ -3,7 +3,7 @@
 
 /**
  * @typedef {object} Case
- * @property {string} name        short id (customcq, custombt, ...)
+ * @property {string} name        short id (customcq, breakthrough, ...)
  * @property {string} input       workspace path relative to <sdk>/GodotProject/mods
  * @property {string} [dir]       golden folder under golden/ (omit when there is no golden yet)
  * @property {string} [file]      golden file base name
@@ -22,10 +22,10 @@ export const cases = [
     known: ["OutOfBounds"], // #1 #3 #4
   },
   {
-    name: "custombt",
+    name: "breakthrough",
     input: "CustomBT/custom_breakthrough_template_V5.0.json",
-    dir: "custombt",
-    file: "custombt",
+    dir: "breakthrough",
+    file: "breakthrough",
     maskVars: true, // golden/README.md: this export has a polluted variable table
     known: [
       "OnGameModeStarted_Game_Started_Action", // #12 sort comparator

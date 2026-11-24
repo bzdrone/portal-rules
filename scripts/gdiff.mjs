@@ -1,7 +1,7 @@
 // Compare two generated .ts files unit by unit (top-level functions/consts), ignoring whitespace outside strings.
 // Usage: node scripts/gdiff.mjs ours.ts golden.ts [filterRegex]
 //   env N=<n>          number of diffs to print
-//   env MASK_VARS=1    ignore variable names (for exports whose variable table is unreliable, e.g. golden/custombt)
+//   env MASK_VARS=1    ignore variable names (for exports whose variable table is unreliable, e.g. golden/breakthrough)
 //   env STRICT_EVENTINFO=1  do not ignore eventInfo plumbing
 import { readFileSync } from "node:fs";
 
