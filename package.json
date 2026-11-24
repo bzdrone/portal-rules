@@ -1,0 +1,19 @@
+{
+  "name": "portal-rules",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "portal-rules": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.7",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}
