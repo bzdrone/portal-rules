@@ -37,3 +37,14 @@ Format facts (from the templates, ~215 distinct block types in total):
 - Event context blocks: `EventPlayer`, `EventOtherPlayer`, `EventCapturePoint`, `EventAreaTrigger`. Enum-ish blocks end in `Item` (`UIAnchorItem`, `MusicEventsItem` with `VALUE-0`/`VALUE-1` fields). `Boolean` uses `fields.BOOL: "TRUE"`.
 - Other block keys: `x`,`y`,`deletable`,`inline`,`collapsed`,`icons` (comments), `name`. Rule-level `Wait` is a statement.
 - Most blocks map to a `mod.*` call of the same name; confirm against `C:/PortalSDK/code/types` (`index.d.ts`) and `modlib`.
+
+### Golden output (EA exporter)
+
+`golden/` holds what EA's tool generates from a workspace (see `golden/README.md`). Target to match, modulo whitespace. Observed in `golden/conquest/customcq.ts` (2399 lines, from conquest_template_14.0.json):
+
+- Header `import * as modlib from 'modlib';`. Each rule becomes `<Event>_<Name>_Condition(eventInfo): boolean` (only if it has conditions; AND-ed via `mod.And`), `<Event>_<Name>_Action(eventInfo)` (`async` when it contains `Wait`, which becomes `await mod.Wait(..)`), and a wrapper `<Event>_<Name>(conditionState, eventInfo)` doing `if (!conditionState.update(newState)) return;`. Ongoing rules are prefixed `OngoingGlobal_`; names have spaces replaced with `_`.
+- Dispatch: one `export function <Event>(...)` per event type with an `eventInfo` object of the event's params and a running `eventNum`; calls each rule wrapper with `modlib.getGlobalCondition(n)` / `getPlayerCondition(eventPlayer, n)` / `getCapturePointCondition(cp, n)`. `eventNum` is a global counter per condition kind (Global/Player/CapturePoint), assigned in rule order.
+- Subroutines become plain `function Name(params)`; calls are direct calls. Params keep their declared names.
+- Variables: `const <Name><Scope>Var = mod.GlobalVariable(n)` (also object variables, under `// global vars`, `// mcom vars`, `// vehicle vars` trailers). Reads are `mod.GetVariable(x)`, writes `mod.SetVariable(x, v)`, per-object `mod.ObjectVariable(obj, VarConst)`.
+- Expressions stay as `mod.*` calls (Blockly name -> `mod.Name`); `ForVariable` -> a `for` loop with `iteratorVar` that also copies into the loop variable; FilteredArray/IsTrueForAll etc. use `modlib` with `(currentArrayElement: any) => ...`; enum items -> `mod.Enum.Member`. Text goes through `mod.Message("...")`, with string literals inline; strings.json holds `sN` keys for enum/name strings.
+- Formatting is irregular (embedded newlines in arg lists, 1-space indent). Compare after normalising whitespace.
