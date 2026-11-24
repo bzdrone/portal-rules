@@ -73,3 +73,5 @@ Add new templates or goldens in `scripts/cases.mjs` (the tests and `compare` bot
 
 - EA's own exports fail the type-check (22 errors Conquest, 269 Breakthrough); ours must stay at 0.
 - Write regex-heavy files with the Write/Edit tools: backslashes in shell heredocs and `node -e` get eaten.
+- Inputs are visited in editor order (`orderedInputs` in `src/workspace.ts`), never JSON key order: bundles store keys alphabetically.
+- Experience bundles (`golden/*/custom*_bundle.json`) embed the workspace under `workspace`; `parseWorkspace` accepts both forms.

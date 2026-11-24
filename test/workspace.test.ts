@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { emitWorkspace } from "../src/emit.js";
 import { blockTypeCounts, parseWorkspace } from "../src/workspace.js";
 
 const sdk = process.env.PORTAL_SDK ?? "C:/PortalSDK";
@@ -20,4 +21,20 @@ describe.skipIf(!existsSync(mods))("SDK workspaces", () => {
       expect(counts.get("ruleBlock")).toBeGreaterThan(0);
     });
   }
+});
+
+// The experience bundles exported from the editor embed the rules workspace. They must convert exactly like the SDK templates
+// (block ids and layout differ, the rules do not).
+describe.skipIf(!existsSync(mods))("experience bundles", () => {
+  const bundles: [string, string, string][] = [
+    ["conquest", "conquest/customconquest_bundle.json", templates.conquest],
+    ["breakthrough", "breakthrough/custombreakthrough_bundle.json", templates.breakthrough],
+    ["rush", "rush/customrush_bundle.json", templates.rush],
+  ];
+  it.each(bundles)("%s bundle converts like its SDK template", (_name, bundle, template) => {
+    const fromBundle = emitWorkspace(parseWorkspace(readFileSync(join(import.meta.dirname, "../golden", bundle), "utf8")));
+    const fromTemplate = emitWorkspace(parseWorkspace(readFileSync(join(mods, template), "utf8")));
+    expect(fromBundle.ts).toEqual(fromTemplate.ts);
+    expect(fromBundle.strings).toEqual(fromTemplate.strings);
+  });
 });
