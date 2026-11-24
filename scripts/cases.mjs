@@ -3,7 +3,7 @@
 
 /**
  * @typedef {object} Case
- * @property {string} name        short id (customcq, breakthrough, ...)
+ * @property {string} name        short id (conquest, breakthrough, ...)
  * @property {string} input       workspace path relative to <sdk>/GodotProject/mods
  * @property {string} [dir]       golden folder under golden/ (omit when there is no golden yet)
  * @property {string} [file]      golden file base name
@@ -15,10 +15,10 @@
 /** @type {Case[]} */
 export const cases = [
   {
-    name: "customcq",
+    name: "conquest",
     input: "CustomCQ/conquest_template_14.0.json",
     dir: "conquest",
-    file: "customcq",
+    file: "conquest",
     known: ["OutOfBounds"], // #1 #3 #4
   },
   {
@@ -36,7 +36,7 @@ export const cases = [
     ],
     extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition", "SortedModArray"],
   },
-  { name: "customrush", input: "CustomRush/rush_template_4.0.json" },
+  { name: "rush", input: "CustomRush/rush_template_4.0.json" },
 ];
 
 export const sdkPath = () => process.env.PORTAL_SDK ?? "C:/PortalSDK";

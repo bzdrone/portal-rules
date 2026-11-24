@@ -2,7 +2,7 @@
 
 Classes: **fixed** (EA output is wrong, we differ), **bug-compatible** (we copy a quirk on purpose),
 **unknown** (needs an in-game test or docs check), **harmless** (differs but equivalent).
-References: `golden/conquest/customcq.ts` (from `conquest_template_14.0.json`) and `golden/breakthrough/breakthrough.ts` (from `custom_breakthrough_template_V5.0.json`; its variable table is polluted, see `golden/README.md`). `test/golden.test.ts` enforces the
+References: `golden/conquest/conquest.ts` (from `conquest_template_14.0.json`) and `golden/breakthrough/breakthrough.ts` (from `custom_breakthrough_template_V5.0.json`; its variable table is polluted, see `golden/README.md`). `test/golden.test.ts` enforces the
 list of differing units; `scripts/gdiff.mjs ours.ts golden.ts` shows details.
 
 | # | Area | EA output | Ours | Class | Evidence |

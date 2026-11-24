@@ -40,7 +40,7 @@ Format facts (from the templates, ~215 distinct block types in total):
 
 ### Golden output (EA exporter)
 
-`golden/` holds what EA's tool generates from a workspace (see `golden/README.md`). A reference, not a spec: the exporter can have bugs, so matching it is a default, not a goal. Observed in `golden/conquest/customcq.ts` (2399 lines, from conquest_template_14.0.json):
+`golden/` holds what EA's tool generates from a workspace (see `golden/README.md`). A reference, not a spec: the exporter can have bugs, so matching it is a default, not a goal. Observed in `golden/conquest/conquest.ts` (2399 lines, from conquest_template_14.0.json):
 
 - Header `import * as modlib from 'modlib';`. Each rule becomes `<Event>_<Name>_Condition(eventInfo): boolean` (only if it has conditions; AND-ed via `mod.And`), `<Event>_<Name>_Action(eventInfo)` (`async` when it contains `Wait`, which becomes `await mod.Wait(..)`), and a wrapper `<Event>_<Name>(conditionState, eventInfo)` doing `if (!conditionState.update(newState)) return;`. Ongoing rules are prefixed `OngoingGlobal_`; names have spaces replaced with `_`.
 - Dispatch: one `export function <Event>(...)` per event type with an `eventInfo` object of the event's params and a running `eventNum`; calls each rule wrapper with `modlib.getGlobalCondition(n)` / `getPlayerCondition(eventPlayer, n)` / `getCapturePointCondition(cp, n)`. `eventNum` is a global counter per condition kind (Global/Player/CapturePoint), assigned in rule order.
