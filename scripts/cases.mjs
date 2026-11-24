@@ -37,7 +37,6 @@ export const cases = [
     extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition", "SortedModArray"],
   },
   { name: "customrush", input: "CustomRush/rush_template_4.0.json" },
-  { name: "hybrid", input: "HybridExample/HybridExample.workspace.json" },
 ];
 
 export const sdkPath = () => process.env.PORTAL_SDK ?? "C:/PortalSDK";

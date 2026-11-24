@@ -12,7 +12,7 @@ Converts BF6 Portal block rules logic into TypeScript. Private project.
 The Portal SDK is not vendored; reference it by path (machine-local, may differ elsewhere). Leave it unchanged.
 
 - SDK: `C:/PortalSDK`, version 2.1.2.0 (`sdk.version.json`).
-- Blockly rules sample: `C:/PortalSDK/GodotProject/mods/HybridExample/HybridExample.workspace.json` (paired hand-written `HybridExample.ts`).
+- Blockly rules sample: `C:/PortalSDK/GodotProject/mods/HybridExample/HybridExample.workspace.json` (paired hand-written `HybridExample.ts`); documentation only, not used in tests.
 - Format: `{ mod: { blocks: { blocks: [modBlock] }, variables } }`; `modBlock.RULES` -> chain of `ruleBlock` (`NAME`, `EVENTTYPE`, `OBJECTTYPE` fields, `ACTIONS` input) linked by `next`.
 - Tests should read the SDK path from an env var (e.g. `PORTAL_SDK`, default `C:/PortalSDK`) and skip if absent.
 

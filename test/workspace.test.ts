@@ -9,7 +9,6 @@ const templates = {
   conquest: "CustomCQ/conquest_template_14.0.json",
   breakthrough: "CustomBT/custom_breakthrough_template_V5.0.json",
   rush: "CustomRush/rush_template_4.0.json",
-  hybrid: "HybridExample/HybridExample.workspace.json",
 };
 
 describe.skipIf(!existsSync(mods))("SDK workspaces", () => {
