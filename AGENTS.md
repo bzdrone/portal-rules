@@ -36,7 +36,7 @@ Format facts (from the templates, ~215 distinct block types in total):
 - Subroutines: `subroutineInstanceBlock` (`extraState.subroutineName/parameters`, args in `PARAM-n`), `subroutineArgumentBlock` (`ARGUMENT_INDEX`).
 - Event context blocks: `EventPlayer`, `EventOtherPlayer`, `EventCapturePoint`, `EventAreaTrigger`. Enum-ish blocks end in `Item` (`UIAnchorItem`, `MusicEventsItem` with `VALUE-0`/`VALUE-1` fields). `Boolean` uses `fields.BOOL: "TRUE"`.
 - Other block keys: `x`,`y`,`deletable`,`inline`,`collapsed`,`icons` (comments), `name`. Rule-level `Wait` is a statement.
-- Most blocks map to a `mod.*` call of the same name; confirm against `C:/PortalSDK/code/types` (`index.d.ts`) and `modlib`.
+- Most blocks map to a `mod.*` call of the same name; confirm against `C:/PortalSDK/code/types/mod/index.d.ts` (1.2 MB) and `modlib`.
 
 ### Golden output (EA exporter)
 
@@ -51,6 +51,6 @@ Format facts (from the templates, ~215 distinct block types in total):
 
 ### Golden output policy
 
-- Judge correctness against the intended block semantics (SDK docs, `code/types/index.d.ts`, `modlib`, in-game behaviour), not only the exporter.
+- Judge correctness against the intended block semantics (SDK docs, `code/types/mod/index.d.ts`, `modlib`, in-game behaviour), not only the exporter.
 - Every difference between our output and golden is classified in `docs/divergences.md` as one of: **bug-compatible** (we copy a quirk on purpose), **fixed** (EA is wrong, we differ), or **unknown** (needs testing or a docs check). No unexplained diffs.
 - Suspicious spots to check first: for-loop bounds/step direction vs Blockly semantics, `async` actions fired without `await`, condition-state numbering, `eventInfo` fields, and unqualified calls (e.g. user subroutines shadowing `mod`/`modlib` names).
