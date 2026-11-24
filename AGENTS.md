@@ -61,3 +61,4 @@ Format facts (from the templates, ~215 distinct block types in total):
 - Compare with a golden file: `node scripts/gdiff.mjs ours.ts golden.ts [unitRegex]` (`MASK_VARS=1`, `N=<count>`). It splits both files into top-level units and ignores whitespace, variable indices and the known divergences.
 - Golden files: `golden/conquest` (customcq) and `golden/custombt` (variable table polluted, see `golden/README.md`).
 - Shell/tooling note: backslashes in heredocs and `node -e` can be eaten; write regex-heavy files with the Write/Edit tools.
+- Type-check generated output against the SDK typings and modlib: `npm run typecheck:out -- <file.ts>` (also enforced by `test/typecheck.test.ts` for all templates). EA's own exports fail this check (22 errors Conquest, 269 Breakthrough); ours must stay at 0.

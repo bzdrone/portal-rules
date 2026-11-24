@@ -30,6 +30,7 @@ export function norm(s, { maskVars = false, strictEventInfo = false } = {}) {
       .replace(new RegExp(`${NAME}+?(Global|Player|Team|CapturePoint|MCOM|Vehicle)Var(?!${NAME})`, "g"), "VAR$1")
       .replace(new RegExp(`${NAME}+Var(?!${NAME})`, "g"), "LOOPVAR");
   }
+  out = flattenNary(out);
   if (maskVars) out = maskObjectVariableIndex(out);
   return out;
 }
@@ -56,6 +57,27 @@ function maskObjectVariableIndex(s) {
     res += maskObjectVariableIndex(masked) + ")";
     i = j;
   }
+}
+
+/** mod.And(mod.And(a,b),c) is the two-argument form of EA's mod.And(a,b,c); flatten so both compare equal. */
+function flattenNary(s) {
+  for (const fn of ["mod.And(", "mod.Or("]) {
+    const head = fn + fn;
+    for (let at = s.indexOf(head); at >= 0; at = s.indexOf(head, at + 1)) {
+      const innerStart = at + fn.length;
+      let depth = 0, j = innerStart + fn.length - 1;
+      for (; j < s.length; j++) {
+        if (s[j] === "(") depth++;
+        else if (s[j] === ")" && --depth === 0) break;
+      }
+      // j is the end of the inner call (its closing paren), which must be followed by a comma to be the first argument.
+      if (s[j + 1] === ",") {
+        s = s.slice(0, innerStart) + s.slice(innerStart + fn.length, j) + s.slice(j + 1);
+        at = -1; // restart scan for this function
+      }
+    }
+  }
+  return s;
 }
 
 export function units(src, opts) {

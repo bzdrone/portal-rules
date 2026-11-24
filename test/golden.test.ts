@@ -44,7 +44,7 @@ const cases: Case[] = [
       "OOB_Logic", // #3 (+ #1)
       "OngoingEmplacementSpawner", // #11 missing modlib getter
     ],
-    extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition"],
+    extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition", "SortedModArray"],
   },
 ];
 

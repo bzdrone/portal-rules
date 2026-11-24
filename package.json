@@ -11,7 +11,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "emit": "tsx scripts/emit.ts",
-    "gen:sdk": "node scripts/gen-sdk.mjs"
+    "gen:sdk": "node scripts/gen-sdk.mjs",
+    "typecheck:out": "node scripts/typecheck.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.7",

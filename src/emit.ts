@@ -24,6 +24,8 @@ interface Ctx {
   /** Subroutine being emitted (for subroutineArgumentBlock). */
   sub?: SubInfo;
   diagnostics: string[];
+  /** Local helper functions the emitted code needs (see HELPERS). */
+  helpers: Set<string>;
 }
 
 interface VarInfo {
@@ -46,6 +48,21 @@ const CONDITION_GETTER: Record<string, string> = {
 
 /** Blocks whose last argument is a condition evaluated per array element. */
 const ARRAY_LAMBDA = new Set(["FilteredArray", "IsTrueForAll", "IsTrueForAny"]);
+
+const HELPERS: Record<string, string> = {
+  // modlib.SortedArray wants a JS array and returns one; convert from and back to a mod array.
+  SortedModArray: [
+    "function SortedModArray(array: mod.Array, compare: (a: any, b: any) => number): mod.Array {",
+    " const sorted = modlib.SortedArray(modlib.ConvertArray(array), compare);",
+    " let result = mod.EmptyArray();",
+    " for (let i = 0; i < sorted.length; i++) {",
+    "  result = mod.AppendToArray(result, sorted[i]);",
+    " }",
+    " return result;",
+    "}",
+    "",
+  ].join("\n"),
+};
 
 const VAR_SECTIONS = ["Global", "Player", "Team", "CapturePoint", "MCOM", "Vehicle"];
 
@@ -148,7 +165,8 @@ export function expr(b: Block, ctx: Ctx): string {
     // EA passes the key expression straight to Array.sort as the comparator, which sorts arbitrarily (divergence 12).
     const [arr, key] = args(b, ctx);
     const k = `((currentArrayElement: any) => ${key})`;
-    return `modlib.SortedArray(${arr},(a: any, b: any) => ${k}(a) - ${k}(b))`;
+    ctx.helpers.add("SortedModArray");
+    return `SortedModArray(${arr},(a: any, b: any) => ${k}(a) - ${k}(b))`;
   }
   if (b.type === "ArrayContains") {
     const [arr, x] = args(b, ctx);
@@ -164,6 +182,10 @@ export function expr(b: Block, ctx: Ctx): string {
     return `modlib.FilteredArray(${arr},(currentArrayElement: any) => mod.NotEqualTo(currentArrayElement,${x}))`;
   }
   if (!MOD_FUNCTIONS.has(b.type)) ctx.diagnostics.push(`unknown block type ${b.type}`);
+  // mod.And / mod.Or take exactly two arguments; EA emits them variadic.
+  if ((b.type === "And" || b.type === "Or") && valueInputs(b).length > 2) {
+    return args(b, ctx).reduce((a, c) => `mod.${b.type}(${a},${c})`);
+  }
   return `mod.${b.type}(${args(b, ctx).join(",")})`;
 }
 
@@ -247,7 +269,7 @@ function conditionExpr(first: Block | undefined, ctx: Ctx): string | undefined {
     return expr(e, ctx);
   });
   if (conds.length === 0) return undefined;
-  return conds.length === 1 ? conds[0] : `mod.And(${conds.join(",")})`;
+  return conds.reduce((a, c) => `mod.And(${a},${c})`);
 }
 
 interface Rule {
@@ -313,7 +335,7 @@ export function emitWorkspace(ws: Workspace): EmitResult {
     }
   }
 
-  const ctx: Ctx = { vars, subs, diagnostics };
+  const ctx: Ctx = { vars, subs, diagnostics, helpers: new Set() };
 
   // Rules: name, dispatch grouping and condition-state numbering.
   const seen = new Map<string, number>();
@@ -411,6 +433,7 @@ ${lines.join("\n")}
     );
   }
   const helpers: string[] = [];
+  for (const name of ctx.helpers) helpers.push(HELPERS[name]);
   for (const kind of localGetters) {
     helpers.push(
       `const ${kind}Conditions: { [id: number]: any[] } = {};
