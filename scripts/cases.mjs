@@ -36,7 +36,14 @@ export const cases = [
     ],
     extra: ["EmplacementSpawnerConditions", "getEmplacementSpawnerCondition", "SortedModArray"],
   },
-  { name: "rush", input: "CustomRush/rush_template_4.0.json" },
+  {
+    name: "rush",
+    input: "CustomRush/rush_template_4.0.json",
+    dir: "rush",
+    file: "rush",
+    maskVars: true, // same polluted variable table as breakthrough, see golden/README.md
+    known: ["OnMCOMDestroyed_MCOM_Destroyed_Action", "OOB_Logic"], // #3 negative step; #4 WaitUntil
+  },
 ];
 
 export const sdkPath = () => process.env.PORTAL_SDK ?? "C:/PortalSDK";
