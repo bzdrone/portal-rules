@@ -144,6 +144,12 @@ export function expr(b: Block, ctx: Ctx): string {
     const [arr, cond] = args(b, ctx);
     return `modlib.${b.type}(${arr},(currentArrayElement: any) => ${cond})`;
   }
+  if (b.type === "SortedArray") {
+    // EA passes the key expression straight to Array.sort as the comparator, which sorts arbitrarily (divergence 12).
+    const [arr, key] = args(b, ctx);
+    const k = `((currentArrayElement: any) => ${key})`;
+    return `modlib.SortedArray(${arr},(a: any, b: any) => ${k}(a) - ${k}(b))`;
+  }
   if (b.type === "ArrayContains") {
     const [arr, x] = args(b, ctx);
     return `modlib.IsTrueForAny(${arr},(currentArrayElement: any) => mod.Equals(currentArrayElement,${x}))`;
@@ -366,6 +372,7 @@ export function emitWorkspace(ws: Workspace): EmitResult {
   }
 
   // Variable declarations.
+  const varsAt = out.length;
   const scopes = [...new Set([...VAR_SECTIONS, ...ws.mod.variables.map((v) => v.type)])];
   for (const scope of scopes) {
     const label = scope === "CapturePoint" ? "capture point" : scope.toLowerCase();
@@ -377,22 +384,58 @@ export function emitWorkspace(ws: Workspace): EmitResult {
     out.push("");
   }
 
-  // Event dispatch.
+  // Event dispatch. Object types without a modlib getter get a local helper (EA calls a modlib function that does not exist).
+  const dispatch: string[] = [];
+  const localGetters = new Set<string>();
   for (const [event, group] of groups) {
     const params = group[0].params;
     const kind = group[0].kind;
     const sig = params.map((p) => `${p.name}: mod.${p.type}`).join(", ");
-    const getter = kind === "global" ? "getGlobalCondition" : CONDITION_GETTER[kind];
-    if (!getter) {
-      diagnostics.push(`${event}: no modlib condition getter for ${kind}`);
-      continue;
+    let getter = "modlib.getGlobalCondition";
+    if (kind !== "global") {
+      if (CONDITION_GETTER[kind]) getter = `modlib.${CONDITION_GETTER[kind]}`;
+      else {
+        getter = `get${kind}Condition`;
+        localGetters.add(kind);
+      }
     }
     const first = kind === "global" ? "" : `${params[0].name}, `;
-    const lines = group.map((r) => `  ${r.fn}(modlib.${getter}(${first}eventNum++)${params.length ? ", eventInfo" : ""});`);
-    out.push(
-      `export function ${event}(${sig}) {\nconst eventInfo = {${params.map((p) => p.name).join(", ")}};\nlet eventNum = ${group[0].condNum};\n${lines.join("\n")}\n}\n`,
+    const lines = group.map((r) => `  ${r.fn}(${getter}(${first}eventNum++)${params.length ? ", eventInfo" : ""});`);
+    dispatch.push(
+      `export function ${event}(${sig}) {
+const eventInfo = {${params.map((p) => p.name).join(", ")}};
+let eventNum = ${group[0].condNum};
+${lines.join("\n")}
+}
+`,
     );
   }
+  const helpers: string[] = [];
+  for (const kind of localGetters) {
+    helpers.push(
+      `const ${kind}Conditions: { [id: number]: any[] } = {};
+` +
+        `function get${kind}Condition(obj: mod.${kind}, n: number) {
+` +
+        ` const id = mod.GetObjId(obj);
+` +
+        ` if (!${kind}Conditions[id]) {
+  ${kind}Conditions[id] = [];
+ }
+` +
+        ` const states = ${kind}Conditions[id];
+` +
+        ` while (n >= states.length) {
+  states.push(new modlib.ConditionState());
+ }
+` +
+        ` return states[n];
+}
+`,
+    );
+  }
+  out.splice(varsAt, 0, ...helpers);
+  out.push(...dispatch);
 
   return { ts: `${out.join("\n")}\n`, strings: emitStrings(ws), diagnostics: [...new Set(diagnostics)] };
 }

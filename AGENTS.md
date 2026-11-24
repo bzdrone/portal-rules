@@ -54,3 +54,10 @@ Format facts (from the templates, ~215 distinct block types in total):
 - Judge correctness against the intended block semantics (SDK docs, `code/types/mod/index.d.ts`, `modlib`, in-game behaviour), not only the exporter.
 - Every difference between our output and golden is classified in `docs/divergences.md` as one of: **bug-compatible** (we copy a quirk on purpose), **fixed** (EA is wrong, we differ), or **unknown** (needs testing or a docs check). No unexplained diffs.
 - Suspicious spots to check first: for-loop bounds/step direction vs Blockly semantics, `async` actions fired without `await`, condition-state numbering, `eventInfo` fields, and unqualified calls (e.g. user subroutines shadowing `mod`/`modlib` names).
+
+### Tooling
+
+- `npm test`; `npm run emit -- <workspace.json> <out-base>` writes `<out-base>.ts` and `.strings.json`; `npm run gen:sdk` regenerates `src/generated/sdk.ts` from the SDK.
+- Compare with a golden file: `node scripts/gdiff.mjs ours.ts golden.ts [unitRegex]` (`MASK_VARS=1`, `N=<count>`). It splits both files into top-level units and ignores whitespace, variable indices and the known divergences.
+- Golden files: `golden/conquest` (customcq) and `golden/custombt` (variable table polluted, see `golden/README.md`).
+- Shell/tooling note: backslashes in heredocs and `node -e` can be eaten; write regex-heavy files with the Write/Edit tools.

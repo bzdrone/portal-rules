@@ -2,7 +2,7 @@
 
 Classes: **fixed** (EA output is wrong, we differ), **bug-compatible** (we copy a quirk on purpose),
 **unknown** (needs an in-game test or docs check), **harmless** (differs but equivalent).
-Reference: `golden/conquest/customcq.ts` (from `conquest_template_14.0.json`). `test/golden.test.ts` enforces the
+References: `golden/conquest/customcq.ts` (from `conquest_template_14.0.json`) and `golden/custombt/custombt.ts` (from `custom_breakthrough_template_V5.0.json`; its variable table is polluted, see `golden/README.md`). `test/golden.test.ts` enforces the
 list of differing units; `scripts/gdiff.mjs ours.ts golden.ts` shows details.
 
 | # | Area | EA output | Ours | Class | Evidence |
@@ -16,5 +16,7 @@ list of differing units; `scripts/gdiff.mjs ours.ts golden.ts` shows details.
 | 7 | `ForVariable` upper bound | `i < to` (exclusive) | Same as EA | unknown | Check editor semantics ("from 0 to 10": does 10 run?) |
 | 8 | Variable indices | Order differs from the workspace's `variables` array | Declaration order per scope | harmless | indices only need to be unique per scope |
 | 9 | `ArrayContains`, `RemoveFromArray` | `modlib.IsTrueForAny` / `modlib.FilteredArray` with an Equals/NotEqualTo lambda | Same | n/a (matches) | golden PlayerUISetup |
-| 10 | `IndexOfArrayValue` | not in the Conquest export | Inferred `modlib.IndexOfFirstTrue(arr, e => mod.Equals(e, x))` | unknown | Need the Breakthrough export |
-| 11 | `OngoingEmplacementSpawner` | not in the Conquest export; modlib has no condition getter for EmplacementSpawner | Diagnostic, rule skipped | unknown | Need the Breakthrough export |
+| 10 | `IndexOfArrayValue` | not in either export | Inferred `modlib.IndexOfFirstTrue(arr, e => mod.Equals(e, x))` | unknown | Needs an export that uses it |
+| 11 | Event rules on objects without a modlib getter (EmplacementSpawner) | Dispatch calls `modlib.getEmplacementSpawnerCondition(...)`, which does not exist in modlib, so the rule can never run | Local helper `getEmplacementSpawnerCondition` built on `modlib.ConditionState`, keyed by object id | fixed | custombt golden line ~2587; no EmplacementSpawner in `modlib/index.ts` |
+| 12 | `SortedArray` | `modlib.SortedArray(arr, e => key(e))`: the key function is used as the `Array.sort` comparator, which returns the key of one argument, so the order is arbitrary | Comparator `(a, b) => key(a) - key(b)` (ascending) | fixed | custombt golden line 73; ascending order is assumed, not confirmed |
+| 13 | Golden variable tables | custombt export has 183 global declarations with duplicate `const` names taken from the Conquest template, some indices emitted raw (`ObjectVariable(x, 8)`) | n/a | EA/editor-state problem | Variable names are masked when comparing custombt |
