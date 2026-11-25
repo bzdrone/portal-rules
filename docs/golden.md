@@ -81,7 +81,11 @@ This is the file the converter is compared against. Steps below were walked thro
      `<mode>.strings.json`) instead of pressing Export. Do not reopen the dialog or export a second time in the same page
      session. The page does not restore a draft after a reload (it redirects to "Choose a game mode").
    - Check any file with `grep -c "^const .*Var = " <file>` (95 for Conquest), or compare sizes and hashes.
-   - Not yet tried: whether Export is clean if it is the only action after a fresh page load, and Breakthrough and Rush.
+   - Repeated on a second new draft with nothing else done in between (import once, open the dialog once, press **Export**
+     once): the preview was clean (95 declarations, hashes identical to the golden) and the saved script was again 110,090 bytes
+     with 190 declarations; the saved strings file was identical to the golden. So the doubling reproduces with the normal
+     path. How the existing Conquest golden came out clean is unknown (possibly a different editor version).
+   - Not yet tried: Breakthrough and Rush.
 
 The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
 "Create new Strings file", icons **Manage Scripts**, **Generate Script from Blocks**, and a delete-all trash icon). You do not
