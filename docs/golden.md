@@ -62,8 +62,18 @@ This is the file the converter is compared against. Steps below were walked thro
    It previews the generated script (`import * as modlib from 'modlib';` first), with filename `script-conversion.ts`,
    and the generated strings, with filename `strings-conversion.json`. Press **Export** to save the two files (Cancel closes
    the dialog without saving). Nothing needs to be published.
-7. Copy them into place, renamed: `script-conversion.ts` to `golden/<mode>/<mode>.ts` and `strings-conversion.json` to
-   `golden/<mode>/<mode>.strings.json`. *(Not yet verified: where the browser saves them, and that Export saves both.)*
+7. The browser saved both files to the Downloads folder (`script-conversion.ts`, `strings-conversion.json`). Copy them into
+   place, renamed: `script-conversion.ts` to `golden/<mode>/<mode>.ts` and `strings-conversion.json` to
+   `golden/<mode>/<mode>.strings.json`.
+
+   **Check the variable table before trusting an export.** First walk-through (Conquest template imported once into a new
+   Portal Custom draft): the strings file was byte-identical to the existing golden, and with variable names masked
+   (`MASK_VARS=1 node scripts/gdiff.mjs`) every unit matched, but the script declared every variable twice (190 `const ... Var`
+   lines against 95) with different indices, so unmasked 12 units differed (a variable name resolved to the wrong variable).
+   That is the "polluted variable table" seen in the Breakthrough and Rush goldens. It is not yet known whether the import
+   itself duplicates the variables or the import ran twice; check that the exported script has one declaration per variable
+   (`grep -c "^const .*Var = " <file>` should match the template's variable count, 95 for Conquest) and, if not, reset the
+   workspace and import once more before exporting.
 
 The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
 "Create new Strings file", icons **Manage Scripts**, **Generate Script from Blocks**, and a delete-all trash icon). You do not
