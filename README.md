@@ -51,7 +51,9 @@ Optional check that the script compiles against the SDK typings:
 npm run typecheck:out -- "C:\Users\me\Downloads\my-experience_experience.ts"
 ```
 
-The converter prints a warning for anything it did not recognise. Treat the output like any generated code and test it in a
+The converter prints a warning for anything it did not recognise. If some text in the result is `#`, the web builder's
+profanity filter probably masked it when your experience was saved (it turned a flag letter `F` into `#` in our test); correct
+the text in the editor and export again. Treat the output like any generated code and test it in a
 copy of your experience first. Known differences from EA's own exporter are listed in
 [docs/divergences.md](docs/divergences.md); behaviour we infer rather than know is in
 [docs/portal-behavior.md](docs/portal-behavior.md).

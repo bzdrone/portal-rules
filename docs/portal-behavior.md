@@ -34,3 +34,7 @@ Status: **inferred** (a working template depends on it), **interpreted** (read f
 - Spatial objects carry `ObjId`, `position` and `type`; links to other objects are property names listed in `linked`, resolved by `id`. `PolygonVolume` entries are areas referenced by capture points (`CaptureArea`), sectors and the combat area.
 - In the Conquest map the four HQs lie 300 m or more outside the combat area, and each capture point lists infantry spawn points per team (`InfantrySpawnPoints_Team1/2`).
 - The spatial maps in the experience bundles differ from the SDK's copies of the same maps. The bundle's workspace is byte-for-byte different from the SDK template but converts to identical TypeScript.
+
+## Web builder
+
+- The web builder appears to run a profanity filter on text when an experience is saved. In an experience export of the Conquest template (made 2026-11-25), the one-letter text `"F"` (a flag letter in `ObjectiveLetters`) came back as `"#"`, while the SDK template has `"F"`. Hash marks in exported text are usually the filter's masking. Status: **interpreted** (the explanation comes from the user, not from EA documentation). The converter copies text as it finds it, so the `#` ends up in the generated script; fix such text in the editor (or the exported file) before converting.
