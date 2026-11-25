@@ -5,6 +5,11 @@ Converts Battlefield 6 Portal block rules into TypeScript scripts for the Portal
 Status: early. It converts the three official Custom* templates (Conquest, Breakthrough, Rush) and the output type-checks
 against the SDK typings.
 
+> **Warning — the conversion is not complete.** This tool does not guarantee a finished, ready-to-use script. Some blocks,
+> expressions or rules may be missing, approximated or converted incorrectly, and the converter may not warn about all of
+> them. Be prepared to review the generated script and make manual fixes, and test it in a copy of your experience before
+> relying on it.
+
 This is an unofficial community project. It is not affiliated with or endorsed by Electronic Arts or DICE. Battlefield and
 Portal are trademarks of Electronic Arts. This repository contains no EA code, SDK files, templates or exports.
 
@@ -51,7 +56,8 @@ Optional check that the script compiles against the SDK typings:
 npm run typecheck:out -- "C:\Users\me\Downloads\my-experience_experience.ts"
 ```
 
-The converter prints a warning for anything it did not recognise. If some text in the result is `#`, the web builder's
+The converter prints a warning for anything it did not recognise, but silence does not mean the conversion is complete:
+expect to review the result and make manual fixes where needed. If some text in the result is `#`, the web builder's
 profanity filter probably masked it when your experience was saved (it turned a flag letter `F` into `#` in our test); correct
 the text in the editor and export again. Treat the output like any generated code and test it in a
 copy of your experience first. Known differences from EA's own exporter are listed in

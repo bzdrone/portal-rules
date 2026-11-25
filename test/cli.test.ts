@@ -38,6 +38,7 @@ describe("cli", () => {
       const out = mkdtempSync(join(scratch, "cli-"));
       const r = run(template, "--out", out);
       expect(r.status).toBe(0);
+      expect(r.stderr).toContain("conversion is not complete");
       const expected = emitWorkspace(parseWorkspace(readFileSync(template, "utf8")));
       expect(readFileSync(join(out, "rush_template_4.0.ts"), "utf8")).toBe(expected.ts);
       expect(JSON.parse(readFileSync(join(out, "rush_template_4.0.strings.json"), "utf8"))).toEqual(expected.strings);

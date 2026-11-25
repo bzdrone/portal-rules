@@ -2,6 +2,8 @@
 
 Converts BF6 Portal block rules logic into TypeScript.
 
+- Distribution is GitHub only, not npm: publish as a public GitHub repo for cloning (`npm install` + `npm run convert`). Do not publish to npm; `package.json` stays `"private": true` as a safeguard.
+
 - Node 22, TypeScript (strict, ESM/NodeNext), Vitest.
 - Layout: `src/` library + CLI, `test/` tests, `samples/` example Portal inputs.
 - Planned pipeline: parse Portal rules -> typed IR -> TypeScript emitter.

@@ -17,6 +17,9 @@ into a TypeScript script and a strings file:
 --out <folder>   where to write them (default: next to the input file)
 --sdk <folder>   the Portal SDK folder (default: PORTAL_SDK environment variable, then C:/PortalSDK).
                  The SDK is only read for the list of block and event names; nothing from it is copied.
+
+Warning: the conversion is not complete. The generated script may be missing, approximate or wrong in places;
+be prepared to review it and make manual fixes, and test it in a copy of your experience.
 `;
 
 function fail(message: string): never {
@@ -77,6 +80,10 @@ writeFileSync(scriptFile, result.ts);
 writeFileSync(stringsFile, `${JSON.stringify(result.strings, null, 2)}\n`);
 
 console.log(`Wrote ${scriptFile}\n      ${stringsFile}`);
+console.warn(
+  "\nWarning: the conversion is not complete. The generated script may need manual fixes; " +
+    "review it and test it in a copy of your experience before relying on it.",
+);
 if (result.diagnostics.length) {
   console.warn(`\n${result.diagnostics.length} warning(s) (the script may need attention):`);
   for (const d of result.diagnostics) console.warn(`  ${d}`);
