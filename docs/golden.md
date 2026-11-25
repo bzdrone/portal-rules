@@ -66,18 +66,24 @@ This is the file the converter is compared against. Steps below were walked thro
    place, renamed: `script-conversion.ts` to `golden/<mode>/<mode>.ts` and `strings-conversion.json` to
    `golden/<mode>/<mode>.strings.json`.
 
-   **Check the variable table before trusting an export.** First walk-through (Conquest template imported once into a new
-   Portal Custom draft): the strings file was byte-identical to the existing golden, and with variable names masked
-   (`MASK_VARS=1 node scripts/gdiff.mjs`) every unit matched, but the script declared every variable twice (190 `const ... Var`
-   lines against 95) with different indices, so unmasked 12 units differed (a variable name resolved to the wrong variable).
-   That is the "polluted variable table" seen in the Breakthrough and Rush goldens.
+   **Take the text from the preview, not from the Export button.** Walk-through results (Conquest template, new Portal Custom
+   draft, imported once):
 
-   The duplication grows with each export from the same page session: a second export of the same draft gave 390 declarations
-   (each of the 95 variables four times) with the strings file still identical. So the web exporter appears to append the
-   variable table every time it generates a script, not on import. Not yet established: whether a clean (single) table is
-   possible, for example by opening the Export dialog once right after a page load. Reloading the editor URL directly
-   (`/bf6/experience/rules/blocks`) does not restore the draft; it redirects to "Choose a game mode".
-   Check any export with `grep -c "^const .*Var = " <file>` (95 for Conquest) before using it as a golden.
+   - The first time the Export to Script dialog opens, the preview text is **byte-identical** to the existing golden: the script
+     is 104,953 bytes (SHA-256 `f0914396ee6a368ddc5acf2fa22de7ef36d121d73390e7eda00098c16098c4c8`) with 95 variable
+     declarations, and the strings are 6,543 bytes (SHA-256
+     `9474ab6e78455e9bce17b0974ae086cff177d51e170965a9ac47b6855bd55504`).
+   - Pressing **Export** after that saved a script with every variable declared twice (190 `const ... Var` lines, 110,090
+     bytes; 12 units then use the wrong variable name), and a second export from the same page gave 390 (119,604 bytes). The
+     strings file was identical each time. So the exporter appears to append the variable table each time it generates a
+     script (the dialog's own preview is the first generation). This is the "polluted variable table" in the Breakthrough
+     and Rush goldens.
+   - So for a clean golden: use a new draft, import the template once, open **Export to Script** once, and copy the text out
+     of the two preview boxes (click in a box, Ctrl+A, Ctrl+C, paste into `golden/<mode>/<mode>.ts` and
+     `<mode>.strings.json`) instead of pressing Export. Do not reopen the dialog or export a second time in the same page
+     session. The page does not restore a draft after a reload (it redirects to "Choose a game mode").
+   - Check any file with `grep -c "^const .*Var = " <file>` (95 for Conquest), or compare sizes and hashes.
+   - Not yet tried: whether Export is clean if it is the only action after a fresh page load, and Breakthrough and Rush.
 
 The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
 "Create new Strings file", icons **Manage Scripts**, **Generate Script from Blocks**, and a delete-all trash icon). You do not
