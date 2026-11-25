@@ -5,3 +5,5 @@ out
 
 # EA-owned reference files, kept locally only (see docs/golden.md)
 golden/
+
+site

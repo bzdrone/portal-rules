@@ -43,7 +43,8 @@ export function parseBundle(json: string): Bundle {
 
 /** Decodes an attachment's payload exactly as stored (UTF-8 text; for spatial maps, a JSON document). */
 export function decodeAttachment(a: Attachment): string {
-  return Buffer.from(a.attachmentData.original, "base64").toString("utf8");
+  const bytes = Uint8Array.from(atob(a.attachmentData.original), (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 export interface ExtractedBundle {

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal Rules Converter</title>
+<meta name="description" content="Convert a Battlefield 6 Portal experience export into a TypeScript script and strings file, in your browser.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Portal Rules Converter</h1>
+  <p class="lead">Turn a Battlefield 6 Portal experience export into a TypeScript script and a strings file. Everything runs in your browser; nothing is uploaded.</p>
+
+  <p class="warn"><strong>The conversion is not complete.</strong> The script may have missing, approximate or wrong parts. Review it and test it in a copy of your experience.</p>
+
+  <section>
+    <h2>1. Portal SDK typings</h2>
+    <p>The converter reads the list of block and event names from the SDK's <code>code/types/mod/index.d.ts</code>. The SDK is EA's, so it is not included here: choose that file from your own SDK install. It is kept in this browser for next time.</p>
+    <label class="button"><input id="sdk-file" type="file" accept=".ts,.json" multiple hidden>Choose <code>index.d.ts</code></label>
+    <span id="sdk-status" class="status">No SDK loaded</span>
+    <p class="hint">Optional: pick <code>sdk.version.json</code> at the same time to record the version.</p>
+  </section>
+
+  <section>
+    <h2>2. Your experience export</h2>
+    <p>In the Portal web builder, open the Custom tab, click the three dots on your experience and choose Export. A bare workspace <code>.json</code> also works.</p>
+    <div id="drop" class="drop" tabindex="0">Drop the export here, or <label class="link"><input id="input-file" type="file" accept=".json,application/json" hidden>choose a file</label></div>
+  </section>
+
+  <section id="result" hidden>
+    <h2>3. Result</h2>
+    <p id="summary"></p>
+    <div class="actions">
+      <button id="dl-ts" type="button"></button>
+      <button id="dl-strings" type="button"></button>
+    </div>
+    <div id="diagnostics" hidden>
+      <h3>Warnings</h3>
+      <ul id="diag-list"></ul>
+    </div>
+    <details>
+      <summary>Preview script</summary>
+      <pre id="preview"></pre>
+    </details>
+  </section>
+
+  <p id="error" class="error" role="alert" hidden></p>
+
+  <footer>Unofficial community project, not affiliated with or endorsed by Electronic Arts or DICE. <a href="https://github.com/bzdrone/portal-rules">Source on GitHub</a>.</footer>
+</main>
+<script type="module" src="js/web/app.js"></script>
+</body>
+</html>

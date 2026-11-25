@@ -1,4 +1,4 @@
-import { getSdk } from "./sdk.js";
+import { getSdk } from "./sdk-core.js";
 import { emitStrings } from "./strings.js";
 import { type Block, type BlockRef, type Workspace, type VariableDecl, walkBlocks } from "./workspace.js";
 

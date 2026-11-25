@@ -20,6 +20,10 @@ Portal are trademarks of Electronic Arts. This repository contains no EA code, S
 | **Turn my block rules into a script** (just use it) | [Export a script](#export-a-script) below |
 | **Add features or fix the converter** | [CONTRIBUTING.md](CONTRIBUTING.md) |
 
+## Use it in the browser
+
+Once GitHub Pages is enabled for this repo (Settings > Pages > Source: GitHub Actions), the converter is also a web page: pick the SDK's `code/types/mod/index.d.ts` once (it is kept in your browser only), drop in your experience export, and download the `.ts` and `.strings.json`. Nothing is uploaded. Build it locally with `npm run build:web` (output in `site/`).
+
 ## Export a script
 
 You need [Node.js](https://nodejs.org) 22 or newer and the Battlefield 6 Portal SDK. The SDK is only read for the list of

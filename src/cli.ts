@@ -2,10 +2,8 @@
 // Convert a Portal rules workspace (or a full experience bundle) to a TypeScript script and strings file.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, resolve } from "node:path";
-import { extractBundle, parseBundle } from "./bundle.js";
-import { emitWorkspace } from "./emit.js";
+import { convertText } from "./convert.js";
 import { loadSdk, sdkPathFromEnv, useSdk } from "./sdk.js";
-import { parseWorkspace } from "./workspace.js";
 
 const USAGE = `Usage: portal-rules <workspace.json | bundle.json> [--out <folder>] [--sdk <PortalSDK folder>]
 
@@ -62,15 +60,12 @@ try {
   fail((e as Error).message);
 }
 
-let workspace;
+let result;
 try {
-  const json = JSON.parse(text) as Record<string, unknown>;
-  workspace = json.workspace && !json.mod ? extractBundle(parseBundle(text)).workspace : parseWorkspace(text);
+  result = convertText(text);
 } catch (e) {
   fail(`${input} is not a Portal workspace or experience bundle: ${(e as Error).message}`);
 }
-
-const result = emitWorkspace(workspace);
 const folder = outDir ? resolve(outDir) : dirname(input);
 const base = basename(input, extname(input));
 mkdirSync(folder, { recursive: true });
