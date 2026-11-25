@@ -38,16 +38,30 @@ builder). Names below are for Conquest; the other modes are in the table.
    `bf_portal.config.json`). The bundle contains the workspace (the rules), the map rotation and the spatial map.
 4. Copy it into the golden folder, e.g. `golden/conquest/customconquest_bundle.json`.
 
-### 2. Export the TypeScript from the Portal web builder (not documented by the SDK)
+### 2. Export the TypeScript from the Portal web builder
 
-This is the file the converter is compared against. The SDK only says that the web builder can turn blocks into scripts and
-generate a strings file; it does not describe the export steps, so follow the web builder's own UI:
+This is the file the converter is compared against. Steps below were walked through in the web builder; items marked
+*(not yet verified)* were not carried out.
 
-1. Open the Portal web builder (`https://portal.battlefield.com/bf6/`), start a **fresh** session and load only the one
-   workspace: import the template's workspace JSON (`<sdk>/GodotProject/mods/<folder>/<workspace file>`) in the block
-   editor via its Import button. The template READMEs describe this.
-2. Export or download the generated TypeScript script and its strings file.
-3. Save them as `golden/<mode>/<mode>.ts` and `golden/<mode>/<mode>.strings.json` (e.g. `golden/conquest/conquest.ts`).
+1. Sign in at `https://portal.battlefield.com/bf6/` and use a desktop-width window. At narrow widths the Script page says
+   "The rules editor is not supported on this screen size."
+2. **Create a scriptable draft:** Create New, choose the **Portal Custom** tab, select **Default**, press **Start Editing**.
+   The **Official Modes** tab (e.g. Conquest) creates a draft with only Maps & Modes and Publish, and no Rules Editor.
+   Pressing Start Editing creates a draft in your account (delete it afterwards if you do not want it). You do not need to
+   publish anything.
+3. In the draft's left sidebar open **Rules Editor**, which has two pages: **Blocks** and **Script**.
+4. On **Blocks** (Create Rules), the toolbar at the top right of the workspace has, left to right: Search, **Export to
+   Script**, **Export Workspace**, **Import Workspace**, **Reset Workspace** (do not click Reset).
+5. Click **Import Workspace**. A dialog "Import Workspace" asks for a `.json` file ("Load a File" with a folder button), then
+   **Import** / **Cancel**. Load the template workspace JSON (`<sdk>/GodotProject/mods/<folder>/<workspace file>`) and press
+   **Import**. The template READMEs say the same ("import the included JSON of the template ... within the block editor via the
+   Import button"). Do one template per fresh draft, so earlier workspaces do not leak into the variable table.
+6. Generate the script: **Export to Script** on the Blocks toolbar, or the **Script** page's "Generate Script from Blocks"
+   button *(not yet verified which produces the file, or where it appears)*.
+7. The **Script** page ("Edit Script") has "Create new Script file" and "Create new Strings file", an editor, and icons for
+   **Manage Scripts**, **Generate Script from Blocks** and a trash icon (delete all; do not click). Copy or download the
+   generated script and the strings file from there *(not yet verified: exact download control and file names)*.
+8. Save them as `golden/<mode>/<mode>.ts` and `golden/<mode>/<mode>.strings.json`.
 
 Do one workspace per fresh session. The Breakthrough and Rush exports used so far came from a session that had other workspaces
 loaded and have polluted variable tables (duplicate `const` names, raw numeric variable indices). If yours are polluted the
