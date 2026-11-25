@@ -20,9 +20,9 @@ Portal are trademarks of Electronic Arts. This repository contains no EA code, S
 You need [Node.js](https://nodejs.org) 22 or newer and the Battlefield 6 Portal SDK. The SDK is only read for the list of
 block and event names; nothing from it is copied.
 
-1. **Get your rules as a file.** In the Portal web builder open your experience, go to **Rules Editor > Blocks** and use the
-   **Export Workspace** button in the toolbar above the workspace. It saves a `.json` file. (A full experience export from the
-   SDK's Godot editor, a `*_bundle.json`, also works.)
+1. **Export your experience.** In the Portal web builder, go to your list of experiences (the **Custom** tab), click the
+   **⋮** (three dots) on your experience and choose **Export**. It saves a `.json` file (named like `my-experience_experience.json`). A full experience
+   export from the SDK's Godot editor (`*_bundle.json`) and a plain workspace `.json` also work.
 2. **Get this tool.** Download or clone this repository, open a terminal in its folder, and run:
 
    ```sh
@@ -32,15 +32,15 @@ block and event names; nothing from it is copied.
 3. **Convert.** Give it your file, and add `--sdk` with the SDK folder unless the SDK is in `C:/PortalSDK`:
 
    ```sh
-   npm run convert -- "C:\path\to\my-rules.json" --sdk "C:\path\to\PortalSDK"
+   npm run convert -- "C:\Users\me\Downloads\my-experience_experience.json" --sdk "C:\path\to\PortalSDK"
    ```
 
    To avoid typing `--sdk` every time, set the `PORTAL_SDK` environment variable to the SDK folder once.
 
 4. **Use the result.** Next to your file (or in the folder you pass with `--out <folder>`) you get:
 
-   - `my-rules.ts`: the script
-   - `my-rules.strings.json`: the strings
+   - `my-experience_experience.ts`: the script
+   - `my-experience_experience.strings.json`: the strings
 
    In the web builder, add them on the **Rules Editor > Script** page ("Create new Script file" and "Create new Strings
    file").
@@ -48,7 +48,7 @@ block and event names; nothing from it is copied.
 Optional check that the script compiles against the SDK typings:
 
 ```sh
-npm run typecheck:out -- "C:\path\to\my-rules.ts"
+npm run typecheck:out -- "C:\Users\me\Downloads\my-experience_experience.ts"
 ```
 
 The converter prints a warning for anything it did not recognise. Treat the output like any generated code and test it in a
