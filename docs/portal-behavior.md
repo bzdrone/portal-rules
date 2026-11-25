@@ -1,6 +1,6 @@
 # Portal behaviour we rely on
 
-What the converter and the simulator in `phaser-shooter` assume about how Portal runs rules, and how well each point is supported. Kept apart from `divergences.md`, which lists where our output differs from EA's exporter.
+What the converter (and any simulator running its output) assumes about how Portal runs rules, and how well each point is supported. Kept apart from `divergences.md`, which lists where our output differs from EA's exporter.
 
 **Evidence basis.** The three SDK Custom* experiences (Conquest, Breakthrough, Rush) worked as blocks in the real game. How their authors use blocks therefore shows what the blocks do. EA's TypeScript exporter working or not says nothing about the blocks. Nothing here was measured in game by this project.
 

@@ -26,7 +26,7 @@ export const cases = [
     input: "CustomBT/custom_breakthrough_template_V5.0.json",
     dir: "breakthrough",
     file: "breakthrough",
-    maskVars: true, // golden/README.md: this export has a polluted variable table
+    maskVars: true, // docs/golden.md: this export has a polluted variable table
     known: [
       "OnGameModeStarted_Game_Started_Action", // #12 sort comparator
       "OngoingGlobal_Change_Sector_Action", // #3 negative step
@@ -40,7 +40,7 @@ export const cases = [
     input: "CustomRush/rush_template_4.0.json",
     dir: "rush",
     file: "rush",
-    maskVars: true, // same polluted variable table as breakthrough, see golden/README.md
+    maskVars: true, // same polluted variable table as breakthrough, see docs/golden.md
     known: ["OnMCOMDestroyed_MCOM_Destroyed_Action", "OOB_Logic"], // #3 negative step; #4 WaitUntil
   },
 ];

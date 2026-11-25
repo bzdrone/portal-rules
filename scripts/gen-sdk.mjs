@@ -1,6 +1,6 @@
 // Generates src/generated/sdk.ts from the Portal SDK's mod type declarations.
 // Usage: node scripts/gen-sdk.mjs [sdkPath]
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 const sdk = process.argv[2] ?? process.env.PORTAL_SDK ?? "C:/PortalSDK";
 const src = readFileSync(`${sdk}/code/types/mod/index.d.ts`, "utf8");
 const version = JSON.parse(readFileSync(`${sdk}/sdk.version.json`, "utf8")).version;
@@ -35,5 +35,6 @@ export const MOD_FUNCTIONS: ReadonlySet<string> = new Set(${JSON.stringify([...f
 /** Names of \`mod.*\` enums. */
 export const MOD_ENUMS: ReadonlySet<string> = new Set(${JSON.stringify([...enums].sort())});
 `;
+mkdirSync("src/generated", { recursive: true });
 writeFileSync("src/generated/sdk.ts", out);
 console.log(`events ${Object.keys(events).length}, functions ${functions.size}, enums ${enums.size}`);

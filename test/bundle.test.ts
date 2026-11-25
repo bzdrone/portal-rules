@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { decodeAttachment, extractBundle, parseBundle } from "../src/bundle.js";
 
@@ -24,7 +24,10 @@ const bundles = [
   ],
 ] as const;
 
-describe.each(bundles)("%s bundle", (_name, file, mutators, spatialName) => {
+// golden/ is git-ignored (EA material, see docs/golden.md): skip when it is absent.
+const haveGolden = existsSync(golden);
+
+describe.skipIf(!haveGolden).each(bundles)("%s bundle", (_name, file, mutators, spatialName) => {
   const bundle = parseBundle(readFileSync(join(golden, file), "utf8"));
   const parts = extractBundle(bundle);
 
@@ -67,7 +70,7 @@ it("rejects a plain workspace as a bundle", () => {
 });
 
 // golden/<mode>/<mode>.spatial.json and .mutators.json are extracted from the bundle (npm run extract -- ... --name <mode>); keep them in sync.
-describe.each(bundles)("%s golden files", (name, file) => {
+describe.skipIf(!haveGolden).each(bundles)("%s golden files", (name, file) => {
   const bundle = parseBundle(readFileSync(join(golden, file), "utf8"));
   const parts = extractBundle(bundle);
   const dir = join(golden, name);

@@ -13,7 +13,8 @@ const mods = join(sdk, "GodotProject/mods");
 const golden = join(import.meta.dirname, "../golden");
 
 
-describe.skipIf(!existsSync(mods))("EA golden outputs", () => {
+// golden/ is git-ignored EA material (docs/golden.md): skip when absent.
+describe.skipIf(!existsSync(mods) || !existsSync(golden))("EA golden outputs", () => {
   for (const c of allCases.filter((c: { dir?: string }) => c.dir)) {
     describe(c.name, () => {
       const result = emitWorkspace(parseWorkspace(readFileSync(join(mods, c.input), "utf8")));

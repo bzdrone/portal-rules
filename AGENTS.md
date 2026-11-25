@@ -1,6 +1,6 @@
 # portal-rules
 
-Converts BF6 Portal block rules logic into TypeScript. Private project.
+Converts BF6 Portal block rules logic into TypeScript.
 
 - Node 22, TypeScript (strict, ESM/NodeNext), Vitest.
 - Layout: `src/` library + CLI, `test/` tests, `samples/` example Portal inputs.
@@ -40,7 +40,7 @@ Format facts (from the templates, ~215 distinct block types in total):
 
 ### Golden output (EA exporter)
 
-`golden/` holds what EA's tool generates from a workspace (see `golden/README.md`). A reference, not a spec: the exporter can have bugs, so matching it is a default, not a goal. Observed in `golden/conquest/conquest.ts` (2399 lines, from conquest_template_14.0.json):
+`golden/` holds what EA's tool generates from a workspace (git-ignored, local only; recreate per `docs/golden.md`). A reference, not a spec: the exporter can have bugs, so matching it is a default, not a goal. Observed in `golden/conquest/conquest.ts` (2399 lines, from conquest_template_14.0.json):
 
 - Header `import * as modlib from 'modlib';`. Each rule becomes `<Event>_<Name>_Condition(eventInfo): boolean` (only if it has conditions; AND-ed via `mod.And`), `<Event>_<Name>_Action(eventInfo)` (`async` when it contains `Wait`, which becomes `await mod.Wait(..)`), and a wrapper `<Event>_<Name>(conditionState, eventInfo)` doing `if (!conditionState.update(newState)) return;`. Ongoing rules are prefixed `OngoingGlobal_`; names have spaces replaced with `_`.
 - Dispatch: one `export function <Event>(...)` per event type with an `eventInfo` object of the event's params and a running `eventNum`; calls each rule wrapper with `modlib.getGlobalCondition(n)` / `getPlayerCondition(eventPlayer, n)` / `getCapturePointCondition(cp, n)`. `eventNum` is a global counter per condition kind (Global/Player/CapturePoint), assigned in rule order.
@@ -79,5 +79,4 @@ Add new templates or goldens in `scripts/cases.mjs` (the tests and `compare` bot
 - `src/bundle.ts` models the experience bundle: `parseBundle`, `extractBundle`, `decodeAttachment`. Spatial maps are base64 UTF-8 JSON in `attachments[].attachmentData.original` (`mapRotation` repeats the same attachments). Conquest and Breakthrough bundles only set `MaxPlayerCount_PerTeam` and `MaxTeamCount`; Rush also sets `AiSpawnType`, `FactionID_PerTeam`, `ScoreboardType`, `AI_ManDownExperienceType_PerTeam`. The decoded spatial maps differ from the SDK copies of the same maps (different edits or SDK version).
 - Evidence policy: the three template mods worked as blocks in game, so what the blocks do (how the authors use them) is ground truth for block semantics. EA's TypeScript converter working or not tells us nothing about the blocks. When a template relies on a behaviour (negative-step loops, event rules that must run on every event), the converter must reproduce it, and EA's output does not count as evidence. Record such evidence in `docs/divergences.md`.
 - Event rules are not edge triggered; only Ongoing rules are (`modlib.getSimpleCondition()` vs `getXCondition(obj, n)`).
-- `docs/portal-behavior.md` records the Portal behaviour we rely on and its status (inferred, interpreted, assumed, open); `docs/divergences.md` records where our output differs from EA's. `docs/HANDOFF.md` is temporary session state.
-- Scratch files go in the gitignored `tmp/`, never the system temp directory.
+- `docs/portal-behavior.md` records the Portal behaviour we rely on and its status (inferred, interpreted, assumed, open); `docs/divergences.md` records where our output differs from EA's. - Scratch files go in the gitignored `tmp/`, never the system temp directory.
