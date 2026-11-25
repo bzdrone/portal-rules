@@ -18,101 +18,48 @@ PORTAL_SDK=/path/to/PortalSDK npm run gen:sdk
 It reads `<sdk>/code/types/mod/index.d.ts` and `<sdk>/sdk.version.json`. `npm test`, `npm run build` and `npm run typecheck`
 run this automatically when the file is missing.
 
-## Recreate `golden/`
+## Recreate `golden/` (Conquest walkthrough)
 
-Each template mode needs an experience bundle (from the SDK's Godot editor) and a TypeScript export (from EA's Portal web
-builder). Names below are for Conquest; the other modes are in the table.
+The comparison tests use `golden/conquest/`. This walks through that one case; Breakthrough (`CustomBT/`,
+`custom_breakthrough_template_V5.0.json`) and Rush (`CustomRush/`, `rush_template_4.0.json`) work the same way with their own
+template (see `scripts/cases.mjs`). You need two things: an experience bundle from the SDK's Godot editor, and the TypeScript
+export from EA's Portal web builder. Both come from the Conquest template, `<sdk>/GodotProject/mods/CustomCQ/conquest_template_14.0.json`.
 
-| Mode | Template folder in `<sdk>/GodotProject/mods` | Workspace file | Golden folder / bundle name |
-|---|---|---|---|
-| Conquest | `CustomCQ/` | `conquest_template_14.0.json` | `golden/conquest/`, `customconquest_bundle.json` |
-| Breakthrough | `CustomBT/` | `custom_breakthrough_template_V5.0.json` | `golden/breakthrough/`, `custombreakthrough_bundle.json` |
-| Rush | `CustomRush/` | `rush_template_4.0.json` | `golden/rush/`, `customrush_bundle.json` |
-
-### 1. Export the experience bundle (documented by the SDK)
+### 1. Export the experience bundle (Godot)
 
 1. Open `<sdk>/GodotProject` in the Godot editor that ships with the SDK.
-2. Use the BFPortal plugin's experience exporter, pick the mode (e.g. Custom Conquest), and export it. The exporter is
-   `code/gdplugins/bf_portal/experience_exporter` in the SDK; I have not confirmed the exact button label.
-3. It writes `<sdk>/export/<mode>-<timestamp>/<mode>_bundle.json` (the folder is `modExportDir` in the plugin's
-   `bf_portal.config.json`). The bundle contains the workspace (the rules), the map rotation and the spatial map.
-4. Copy it into the golden folder, e.g. `golden/conquest/customconquest_bundle.json`.
+2. Use the BFPortal plugin's experience exporter, choose Custom Conquest, and export it. (The plugin is
+   `code/gdplugins/bf_portal/experience_exporter` in the SDK; the exact button label was not confirmed.)
+3. It writes `<sdk>/export/customconquest-<timestamp>/customconquest_bundle.json`. Copy it to
+   `golden/conquest/customconquest_bundle.json`.
 
-### 2. Export the TypeScript from the Portal web builder
+### 2. Export the TypeScript (Portal web builder)
 
-This is the file the converter is compared against. Steps below were walked through in the web builder; items marked
-*(not yet verified)* were not carried out.
+1. Sign in at `https://portal.battlefield.com/bf6/`. Use a desktop-width window: at narrow widths the Script page says "The
+   rules editor is not supported on this screen size."
+2. **Create New**, open the **Portal Custom** tab, choose **Default**, press **Start Editing**. (The Official Modes tab, such
+   as Conquest, makes a draft with no Rules Editor.) This creates a draft in your account; delete it when you are done. You do
+   not need to publish anything.
+3. In the left sidebar open **Rules Editor**, then **Blocks**.
+4. In the toolbar at the top right of the workspace (left to right: Search, **Export to Script**, **Export Workspace**,
+   **Import Workspace**, **Reset Workspace**), click **Import Workspace**. In the dialog choose
+   `conquest_template_14.0.json` with the folder button, then **Import**. The template's rules appear (the first is
+   "Initialise"). Import once only.
+5. Click **Export to Script**. The dialog shows a preview of the script (it starts with `import * as modlib from 'modlib';`)
+   named `script-conversion.ts`, and a preview of the strings named `strings-conversion.json`. Press **Export** to save both
+   files, or copy the text from the preview boxes (see Troubleshooting for which is cleaner).
+6. Save them as `golden/conquest/conquest.ts` and `golden/conquest/conquest.strings.json`.
 
-1. Sign in at `https://portal.battlefield.com/bf6/` and use a desktop-width window. At narrow widths the Script page says
-   "The rules editor is not supported on this screen size."
-2. **Create a scriptable draft:** Create New, choose the **Portal Custom** tab, select **Default**, press **Start Editing**.
-   The **Official Modes** tab (e.g. Conquest) creates a draft with only Maps & Modes and Publish, and no Rules Editor.
-   Pressing Start Editing creates a draft in your account (delete it afterwards if you do not want it). You do not need to
-   publish anything.
-3. In the draft's left sidebar open **Rules Editor**, which has two pages: **Blocks** and **Script**.
-4. On **Blocks** (Create Rules), the toolbar at the top right of the workspace has, left to right: Search, **Export to
-   Script**, **Export Workspace**, **Import Workspace**, **Reset Workspace** (do not click Reset).
-5. Click **Import Workspace**. A dialog "Import Workspace" asks for a `.json` file ("Load a File" with a folder button), then
-   **Import** / **Cancel**. Load the template workspace JSON (`<sdk>/GodotProject/mods/<folder>/<workspace file>`) and press
-   **Import**. The template READMEs say the same ("import the included JSON of the template ... within the block editor via the
-   Import button"). Do one template per fresh draft, so earlier workspaces do not leak into the variable table.
-6. After the import the template's rules show in the workspace (for Conquest, the first rule is "Initialise").
-   Click **Export to Script** on the Blocks toolbar. A dialog "Export to Script" opens, with a note ("Import these files on
-   the Rules Editor 'Script' page to apply them to your Experience") and a warning that script conversion may be imperfect.
-   It previews the generated script (`import * as modlib from 'modlib';` first), with filename `script-conversion.ts`,
-   and the generated strings, with filename `strings-conversion.json`. **Export** saves those two files to the browser's
-   download folder, but see the warning in step 7 before using it. **Cancel** closes the dialog. Nothing needs to be published.
-7. Put the script in `golden/<mode>/<mode>.ts` and the strings in `golden/<mode>/<mode>.strings.json`.
+Nothing is published and the Script page is not needed. (The Script page is where these files would be imported back into an
+experience.)
 
-   **Take the text from the preview, not from the Export button.** Walk-through results (Conquest template, new Portal Custom
-   draft, imported once):
-
-   - The first time the Export to Script dialog opens, the preview text is **byte-identical** to the existing golden: the script
-     is 104,953 bytes (SHA-256 `f0914396ee6a368ddc5acf2fa22de7ef36d121d73390e7eda00098c16098c4c8`) with 95 variable
-     declarations, and the strings are 6,543 bytes (SHA-256
-     `9474ab6e78455e9bce17b0974ae086cff177d51e170965a9ac47b6855bd55504`).
-   - Pressing **Export** after that saved a script with every variable declared twice (190 `const ... Var` lines, 110,090
-     bytes; 12 units then use the wrong variable name), and a second export from the same page gave 390 (119,604 bytes). The
-     strings file was identical each time. So the exporter appears to append the variable table each time it generates a
-     script (the dialog's own preview is the first generation). This is the "polluted variable table" in the Breakthrough
-     and Rush goldens.
-   - So for a clean golden: use a new draft, import the template once, open **Export to Script** once, and copy the text out
-     of the two preview boxes (click in a box, Ctrl+A, Ctrl+C, paste into `golden/<mode>/<mode>.ts` and
-     `<mode>.strings.json`) instead of pressing Export. Do not reopen the dialog or export a second time in the same page
-     session. The page does not restore a draft after a reload (it redirects to "Choose a game mode").
-   - Check any file with `grep -c "^const .*Var = " <file>` (95 for Conquest), or compare sizes and hashes.
-   - Repeated on a second new draft with nothing else done in between (import once, open the dialog once, press **Export**
-     once): the preview was clean (95 declarations, hashes identical to the golden) and the saved script was again 110,090 bytes
-     with 190 declarations; the saved strings file was identical to the golden. So the doubling reproduces with the normal
-     path. How the existing Conquest golden came out clean is unknown (possibly a different editor version).
-   - Saving does not help; it makes it worse. After saving the draft (named, then reopened from the project list so the page
-     reloaded from the server), the blocks were intact but the very first Export to Script preview already had 390
-     declarations (119,604 bytes), and the strings hash no longer matched the golden. So the duplicated variables are stored in
-     the workspace: exporting appears to write the extra variables back into the draft's variable table, and saving keeps them.
-     A previously exported experience therefore stays polluted. That would explain the polluted Breakthrough and Rush goldens
-     (their experiences had been exported before), though that is an inference.
-   - Practical rule: only the first generation after a fresh import is clean. Use a new, unsaved draft, import once, read the
-     preview once, and discard the draft. Never reuse a draft that has been exported or saved.
-   - Not yet tried: Breakthrough and Rush.
-
-The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
-"Create new Strings file", icons **Manage Scripts**, **Generate Script from Blocks**, and a delete-all trash icon). You do not
-need it to produce the golden files.
-
-Do one workspace per fresh session. The Breakthrough and Rush exports used so far came from a session that had other workspaces
-loaded and have polluted variable tables (duplicate `const` names, raw numeric variable indices). If yours are polluted the
-same way, keep `maskVars: true` for that case in `scripts/cases.mjs`; a clean export can drop it.
-
-### 3. Extract the spatial map and mutators from the bundle
+### 3. Extract the spatial map and mutators
 
 ```sh
 npm run extract -- golden/conquest/customconquest_bundle.json golden/conquest --name conquest
-npm run extract -- golden/breakthrough/custombreakthrough_bundle.json golden/breakthrough --name breakthrough
-npm run extract -- golden/rush/customrush_bundle.json golden/rush --name rush
 ```
 
-This writes `<mode>.spatial.json` (byte-exact) and `<mode>.mutators.json` next to each bundle. The maps are
-`MP_FireStorm` (Conquest) and `MP_Plaza` (Breakthrough, Rush).
+This writes `conquest.spatial.json` (byte-exact) and `conquest.mutators.json`. The map is `MP_FireStorm`.
 
 ### 4. Check it
 
@@ -121,18 +68,30 @@ npm test
 npm run compare
 ```
 
-`compare` prints, per mode, how many units match the golden and which differ. Your exports may come from a different
-SDK or editor version than the ones this project was developed against, so some differences may be new: classify them in
-`docs/divergences.md` and adjust the `known` lists in `scripts/cases.mjs`. Expected folder layout when done:
+Expected layout: `golden/conquest/{customconquest_bundle.json, conquest.ts, conquest.strings.json, conquest.spatial.json,
+conquest.mutators.json}`. Your export may come from a different SDK or editor version than the one this project was developed
+against, so some differences may be new: classify them in `docs/divergences.md` and adjust the `known` list in
+`scripts/cases.mjs`. Golden files are byte-exact; do not let an editor convert their line endings.
 
-```
-golden/conquest/{customconquest_bundle.json, conquest.ts, conquest.strings.json, conquest.spatial.json, conquest.mutators.json}
-golden/breakthrough/{custombreakthrough_bundle.json, breakthrough.*}
-golden/rush/{customrush_bundle.json, rush.*}
-```
+## Troubleshooting
 
-Golden files are byte-exact: do not let git or an editor convert line endings (they are ignored by git, so this only matters
-if you copy them around).
+**The script declares every variable more than once.** Count the declarations: `grep -c "^const .*Var = " conquest.ts` should
+be 95 (the template's variable count). If it is 190 or 390, the export is polluted. What we saw:
+
+- A new draft with the template imported once gives a clean script (95 declarations; the strings file matched the existing
+  golden byte for byte) in the **preview** the first time the Export to Script dialog opens.
+- The file saved by pressing **Export** had every variable twice (190 declarations, 110,090 bytes), and a second export from
+  the same page gave four copies (390, 119,604 bytes). The strings file stayed correct. This happened on two separate new
+  drafts.
+- The duplicates are stored in the draft. After saving the draft and reopening it, the first preview already had 390.
+- With the duplicates, the wrong variable name is used in some places (12 units differ from the golden), so removing the extra
+  `const` lines from the `.ts` by hand is not enough.
+
+What to do: delete the duplicate variables from the draft before exporting, then export again. (Deleting them in the editor
+was not tried.) The dependable alternative is to start over: a new draft, import the template once, open Export to Script
+once, and copy the text from the two preview boxes (click in a box, Ctrl+A, Ctrl+C) into the files instead of pressing
+**Export**. Do not reuse a draft that has already been exported or saved. If you cannot get a clean export, set
+`maskVars: true` for that case in `scripts/cases.mjs`: the comparison then ignores variable names and declarations.
 
 A golden is a reference, not ground truth: the exporter can have bugs. Small hand-built workspaces that isolate single block
 types would make better references than the full templates.
