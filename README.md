@@ -38,4 +38,4 @@ git-ignored reference files (`golden/`, `src/generated/`) used for comparison ag
 
 ## License
 
-No license has been chosen yet; until one is added, all rights are reserved.
+[MIT](LICENSE). This covers this repository only, not the Portal SDK or any EA content you use with it.

@@ -26,5 +26,6 @@
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   },
-  "description": "Convert Battlefield 6 Portal block rules into TypeScript"
+  "description": "Convert Battlefield 6 Portal block rules into TypeScript",
+  "license": "MIT"
 }
