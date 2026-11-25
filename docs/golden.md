@@ -47,7 +47,7 @@ export from EA's Portal web builder. Both come from the Conquest template, `<sdk
    "Initialise"). Import once only.
 5. Click **Export to Script**. The dialog shows a preview of the script (it starts with `import * as modlib from 'modlib';`)
    named `script-conversion.ts`, and a preview of the strings named `strings-conversion.json`. Press **Export** to save both
-   files, or copy the text from the preview boxes (see Troubleshooting for which is cleaner).
+   files. (If the script has doubled variables, copy from the preview instead: see Troubleshooting.)
 6. Save them as `golden/conquest/conquest.ts` and `golden/conquest/conquest.strings.json`.
 
 Nothing is published and the Script page is not needed. (The Script page is where these files would be imported back into an
@@ -87,10 +87,10 @@ be 95 (the template's variable count). If it is 190 or 390, the export is pollut
 - With the duplicates, the wrong variable name is used in some places (12 units differ from the golden), so removing the extra
   `const` lines from the `.ts` by hand is not enough.
 
-What to do: delete the duplicate variables from the draft before exporting, then export again. (Deleting them in the editor
-was not tried.) The dependable alternative is to start over: a new draft, import the template once, open Export to Script
-once, and copy the text from the two preview boxes (click in a box, Ctrl+A, Ctrl+C) into the files instead of pressing
-**Export**. Do not reuse a draft that has already been exported or saved. If you cannot get a clean export, set
+What to do: copy the text from the Export to Script dialog instead of pressing **Export**. On a new draft, import the template
+once, open **Export to Script** once, and in each of the two preview boxes click, press Ctrl+A then Ctrl+C, and paste into
+`golden/conquest/conquest.ts` and `golden/conquest/conquest.strings.json`. Do not reopen the dialog, and do not reuse a draft
+that has already been exported or saved (it already holds the duplicates). If you cannot get a clean export at all, set
 `maskVars: true` for that case in `scripts/cases.mjs`: the comparison then ignores variable names and declarations.
 
 A golden is a reference, not ground truth: the exporter can have bugs. Small hand-built workspaces that isolate single block
