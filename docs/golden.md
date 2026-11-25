@@ -60,11 +60,9 @@ This is the file the converter is compared against. Steps below were walked thro
    Click **Export to Script** on the Blocks toolbar. A dialog "Export to Script" opens, with a note ("Import these files on
    the Rules Editor 'Script' page to apply them to your Experience") and a warning that script conversion may be imperfect.
    It previews the generated script (`import * as modlib from 'modlib';` first), with filename `script-conversion.ts`,
-   and the generated strings, with filename `strings-conversion.json`. Press **Export** to save the two files (Cancel closes
-   the dialog without saving). Nothing needs to be published.
-7. The browser saved both files to the Downloads folder (`script-conversion.ts`, `strings-conversion.json`). Copy them into
-   place, renamed: `script-conversion.ts` to `golden/<mode>/<mode>.ts` and `strings-conversion.json` to
-   `golden/<mode>/<mode>.strings.json`.
+   and the generated strings, with filename `strings-conversion.json`. **Export** saves those two files to the browser's
+   download folder, but see the warning in step 7 before using it. **Cancel** closes the dialog. Nothing needs to be published.
+7. Put the script in `golden/<mode>/<mode>.ts` and the strings in `golden/<mode>/<mode>.strings.json`.
 
    **Take the text from the preview, not from the Export button.** Walk-through results (Conquest template, new Portal Custom
    draft, imported once):
