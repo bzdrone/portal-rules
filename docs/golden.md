@@ -75,6 +75,9 @@ against, so some differences may be new: classify them in `docs/divergences.md` 
 
 ## Troubleshooting
 
+The problems below were observed in the Portal web builder on 2026-11-25 (SDK 2.1.2.0). They look like exporter bugs, so they may
+already be fixed when you read this: try the normal Export path first and use the workaround only if you hit them.
+
 **The script declares every variable more than once.** Count the declarations: `grep -c "^const .*Var = " conquest.ts` should
 be 95 (the template's variable count). If it is 190 or 390, the export is polluted. What we saw:
 
@@ -87,7 +90,7 @@ be 95 (the template's variable count). If it is 190 or 390, the export is pollut
 - With the duplicates, the wrong variable name is used in some places (12 units differ from the golden), so removing the extra
   `const` lines from the `.ts` by hand is not enough.
 
-What to do: copy the text from the Export to Script dialog instead of pressing **Export**. On a new draft, import the template
+Workaround, if you hit this: copy the text from the Export to Script dialog instead of pressing **Export**. On a new draft, import the template
 once, open **Export to Script** once, and in each of the two preview boxes click, press Ctrl+A then Ctrl+C, and paste into
 `golden/conquest/conquest.ts` and `golden/conquest/conquest.strings.json`. Do not reopen the dialog, and do not reuse a draft
 that has already been exported or saved (it already holds the duplicates). If you cannot get a clean export at all, set
