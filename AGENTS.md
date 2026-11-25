@@ -63,11 +63,10 @@ Reuse these instead of writing throwaway scripts (`tmp/` is gitignored scratch o
 |---|---|
 | `npm test` | vitest: parsing, golden comparison, type-check of every template |
 | `npm run compare -- [case]` | emit each template in `scripts/cases.mjs`, type-check, compare with golden; env `N`, `UNIT=<re>`, `OUT`, `NOTYPES` |
-| `npm run emit -- <workspace.json> <out-base>` | convert one workspace to `<out-base>.ts` and `.strings.json` |
+| `npm run convert -- <workspace.json or bundle.json> [--out dir] [--sdk dir]` | convert a workspace or bundle to `<name>.ts` and `<name>.strings.json` (the exporter-user command; also `dist/cli.js` after `npm run build`) |
 | `npm run typecheck:out -- <file.ts>` | type-check generated output against the SDK typings and modlib, with source context |
 | `npm run survey -- [--all] [files]` | block-type census: counts, inputs, fields, extraState |
 | `npm run extract -- <bundle.json> [out-dir] [--name base]` | split an experience bundle into `workspace.json` (the rules), `<map>.spatial.json` (byte-exact), `mutators.json` and `experience.json` (name, teams, map rotation, no map data); with `--name`, only `<base>.spatial.json` and `<base>.mutators.json` (the golden layout) |
-| `npm run gen:sdk` | regenerate `src/generated/sdk.ts` from the SDK |
 | `node scripts/gdiff.mjs ours.ts golden.ts [unitRegex]` | low-level unit diff (`MASK_VARS=1`, `N`) |
 
 Add new templates or goldens in `scripts/cases.mjs` (the tests and `compare` both read it). Keep known divergences there in sync with `docs/divergences.md`.

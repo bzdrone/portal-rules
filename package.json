@@ -4,20 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "pretest": "node scripts/ensure-sdk.mjs",
-    "prebuild": "node scripts/ensure-sdk.mjs",
-    "pretypecheck": "node scripts/ensure-sdk.mjs",
     "build": "tsc",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "emit": "tsx scripts/emit.ts",
-    "gen:sdk": "node scripts/gen-sdk.mjs",
     "typecheck:out": "node scripts/typecheck.mjs",
     "compare": "tsx scripts/compare.ts",
     "survey": "node scripts/survey.mjs",
     "extract": "tsx scripts/extract.ts",
-    "preemit": "node scripts/ensure-sdk.mjs",
-    "precompare": "node scripts/ensure-sdk.mjs"
+    "convert": "tsx src/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.7",
@@ -29,5 +23,8 @@
   "license": "MIT",
   "engines": {
     "node": ">=22"
+  },
+  "bin": {
+    "portal-rules": "dist/cli.js"
   }
 }

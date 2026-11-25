@@ -3,6 +3,5 @@ dist
 tmp
 out
 
-# EA-owned material: kept locally, never committed (see docs/golden.md)
+# EA-owned reference files, kept locally only (see docs/golden.md)
 golden/
-src/generated/

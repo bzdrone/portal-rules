@@ -1,4 +1,4 @@
-import { EVENTS, MOD_ENUMS, MOD_FUNCTIONS } from "./generated/sdk.js";
+import { getSdk } from "./sdk.js";
 import { emitStrings } from "./strings.js";
 import { type Block, type BlockRef, type Workspace, type VariableDecl, walkBlocks } from "./workspace.js";
 
@@ -100,7 +100,7 @@ function contains(root: Block[], pred: (b: Block) => boolean): boolean {
 }
 
 const isWait = (b: Block) => b.type === "Wait" || b.type === "WaitUntil";
-const isEvent = (b: Block) => /^Event[A-Z]/.test(b.type) && !MOD_FUNCTIONS.has(b.type);
+const isEvent = (b: Block) => /^Event[A-Z]/.test(b.type) && !getSdk().functions.has(b.type);
 
 // ---------------------------------------------------------------------------
 // Expressions and statements
@@ -154,7 +154,7 @@ export function expr(b: Block, ctx: Ctx): string {
   const item = /^(\w+)Item$/.exec(b.type);
   if (item && b.fields && "VALUE-0" in b.fields) {
     const group = String(b.fields["VALUE-0"]);
-    if (!MOD_ENUMS.has(group)) ctx.diagnostics.push(`${b.type}: unknown enum ${group}`);
+    if (!getSdk().enums.has(group)) ctx.diagnostics.push(`${b.type}: unknown enum ${group}`);
     return `mod.${group}.${String(b.fields["VALUE-1"])}`;
   }
   if (ARRAY_LAMBDA.has(b.type)) {
@@ -181,7 +181,7 @@ export function expr(b: Block, ctx: Ctx): string {
     const [arr, x] = args(b, ctx);
     return `modlib.FilteredArray(${arr},(currentArrayElement: any) => mod.NotEqualTo(currentArrayElement,${x}))`;
   }
-  if (!MOD_FUNCTIONS.has(b.type)) ctx.diagnostics.push(`unknown block type ${b.type}`);
+  if (!getSdk().functions.has(b.type)) ctx.diagnostics.push(`unknown block type ${b.type}`);
   // mod.And / mod.Or take exactly two arguments; EA emits them variadic. modlib.And is variadic, modlib has no Or.
   if (b.type === "And" && valueInputs(b).length > 2) return `modlib.And(${args(b, ctx).join(",")})`;
   if (b.type === "Or" && valueInputs(b).length > 2) return args(b, ctx).reduce((a, c) => `mod.Or(${a},${c})`);
@@ -344,7 +344,7 @@ export function emitWorkspace(ws: Workspace): EmitResult {
   for (const block of ruleList(ws)) {
     const type = String(block.fields?.EVENTTYPE);
     const event = type === "Ongoing" ? `Ongoing${String(block.fields?.OBJECTTYPE)}` : type;
-    const params = EVENTS[event];
+    const params = getSdk().events[event];
     if (!params) {
       diagnostics.push(`unknown event ${event}`);
       continue;

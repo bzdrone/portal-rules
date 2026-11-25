@@ -1,22 +1,9 @@
-# Golden outputs and generated SDK data (local only)
+# Golden outputs (local only)
 
-This repo does not contain Electronic Arts' material. Two things are git-ignored and must be recreated on your machine:
-
-- `golden/`: what EA's Portal exporter produced for three templates, plus the experience bundles those exports came from.
-- `src/generated/sdk.ts`: event signatures and `mod` function/enum names extracted from the Portal SDK typings.
-
-Without them, the golden comparison and bundle tests skip; the converter itself needs `src/generated/sdk.ts` (see below).
-The Portal SDK itself is not vendored either: install it separately and point `PORTAL_SDK` at it (default `C:/PortalSDK`).
-Tested against SDK 2.1.2.0 (`sdk.version.json`).
-
-## Recreate `src/generated/sdk.ts`
-
-```sh
-PORTAL_SDK=/path/to/PortalSDK npm run gen:sdk
-```
-
-It reads `<sdk>/code/types/mod/index.d.ts` and `<sdk>/sdk.version.json`. `npm test`, `npm run build` and `npm run typecheck`
-run this automatically when the file is missing.
+This repo does not contain Electronic Arts' material. The `golden/` folder, holding what EA's Portal exporter produced for the
+three templates plus the experience bundles those exports came from, is git-ignored and must be recreated on your machine.
+Without it the golden comparison and bundle tests skip. The Portal SDK itself is not vendored either: install it separately and
+point `PORTAL_SDK` at it (default `C:/PortalSDK`). Tested against SDK 2.1.2.0 (`sdk.version.json`).
 
 ## Recreate `golden/` (Conquest walkthrough)
 

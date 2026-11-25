@@ -1,65 +1,64 @@
 # portal-rules
 
-Converts Battlefield 6 Portal block-rules workspaces (the Blockly JSON the Portal editor saves) into TypeScript scripts that use
-the Portal scripting API (`mod.*` and `modlib`).
+Converts Battlefield 6 Portal block rules into TypeScript scripts for the Portal scripting API (`mod.*` and `modlib`).
 
-Status: early. The converter handles the three official Custom* templates (Conquest, Breakthrough, Rush); its output
-type-checks against the SDK typings. Behaviour that is inferred rather than confirmed is tracked in
-[docs/portal-behavior.md](docs/portal-behavior.md), and differences from EA's own exporter in
-[docs/divergences.md](docs/divergences.md).
+Status: early. It converts the three official Custom* templates (Conquest, Breakthrough, Rush) and the output type-checks
+against the SDK typings.
 
 This is an unofficial community project. It is not affiliated with or endorsed by Electronic Arts or DICE. Battlefield and
 Portal are trademarks of Electronic Arts. This repository contains no EA code, SDK files, templates or exports.
 
-## Requirements
+**Who is this for?** There are two kinds of user:
 
-- Node 22+
-- The Battlefield 6 Portal SDK, installed separately. Set `PORTAL_SDK` to its folder (default `C:/PortalSDK`). Tested with
-  SDK 2.1.2.0.
+| I want to... | Go to |
+|---|---|
+| **Turn my block rules into a script** (just use it) | [Export a script](#export-a-script) below |
+| **Add features or fix the converter** | [CONTRIBUTING.md](CONTRIBUTING.md) |
 
-## Quick start
+## Export a script
 
-1. Install Node 22+ and the Portal SDK. Tell the tool where the SDK is (default `C:/PortalSDK`):
+You need [Node.js](https://nodejs.org) 22 or newer and the Battlefield 6 Portal SDK. The SDK is only read for the list of
+block and event names; nothing from it is copied.
 
-   ```sh
-   # PowerShell
-   $env:PORTAL_SDK = "D:/path/to/PortalSDK"
-   # macOS / Linux / Git Bash
-   export PORTAL_SDK=/path/to/PortalSDK
-   ```
-
-2. Clone and install:
+1. **Get your rules as a file.** In the Portal web builder open your experience, go to **Rules Editor > Blocks** and use the
+   **Export Workspace** button in the toolbar above the workspace. It saves a `.json` file. (A full experience export from the
+   SDK's Godot editor, a `*_bundle.json`, also works.)
+2. **Get this tool.** Download or clone this repository, open a terminal in its folder, and run:
 
    ```sh
-   git clone <this repo> && cd portal-rules
    npm install
    ```
 
-3. Convert a rules workspace (the first run also extracts API names from the SDK typings into the git-ignored
-   `src/generated/sdk.ts`):
+3. **Convert.** Give it your file, and add `--sdk` with the SDK folder unless the SDK is in `C:/PortalSDK`:
 
    ```sh
-   npm run emit -- "$PORTAL_SDK/GodotProject/mods/CustomRush/rush_template_4.0.json" out/rush
+   npm run convert -- "C:\path\to\my-rules.json" --sdk "C:\path\to\PortalSDK"
    ```
 
-   This writes `out/rush.ts` (the script) and `out/rush.strings.json`. Use `$env:PORTAL_SDK` in PowerShell.
+   To avoid typing `--sdk` every time, set the `PORTAL_SDK` environment variable to the SDK folder once.
 
-4. Check the result compiles against the SDK typings:
+4. **Use the result.** Next to your file (or in the folder you pass with `--out <folder>`) you get:
 
-   ```sh
-   npm run typecheck:out -- out/rush.ts
-   ```
+   - `my-rules.ts`: the script
+   - `my-rules.strings.json`: the strings
 
-Input must be a bare workspace (`{ "mod": { "blocks": ... } }`). For a full experience export (bundle), split it first with
-`npm run extract -- <bundle.json> <out-dir>` and convert the `workspace.json` it writes.
+   In the web builder, add them on the **Rules Editor > Script** page ("Create new Script file" and "Create new Strings
+   file").
 
-`npm test` runs the tests; checks that need the SDK or the local golden files skip when those are absent. There is no
-published package or standalone CLI yet; everything runs through the npm scripts.
+Optional check that the script compiles against the SDK typings:
 
-## Development
+```sh
+npm run typecheck:out -- "C:\path\to\my-rules.ts"
+```
 
-See [AGENTS.md](AGENTS.md) for the project layout and tooling, and [docs/golden.md](docs/golden.md) for how to recreate the
-git-ignored reference files (`golden/`, `src/generated/`) used for comparison against EA's exporter.
+The converter prints a warning for anything it did not recognise. Treat the output like any generated code and test it in a
+copy of your experience first. Known differences from EA's own exporter are listed in
+[docs/divergences.md](docs/divergences.md); behaviour we infer rather than know is in
+[docs/portal-behavior.md](docs/portal-behavior.md).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md): setup, tests, project layout and how the comparison against EA's exporter works.
 
 ## License
 
