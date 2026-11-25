@@ -6,7 +6,7 @@ Converts BF6 Portal block rules logic into TypeScript.
 
 - Node 22, TypeScript (strict, ESM/NodeNext), Vitest.
 - Layout: `src/` library + CLI, `test/` tests, `samples/` example Portal inputs.
-- Planned pipeline: parse Portal rules -> typed IR -> TypeScript emitter.
+- Pipeline: `workspace.ts` parses Portal rules into typed `Workspace`/`Block` interfaces, then `emit.ts` walks them to TypeScript (with `strings.ts`); `bundle.ts` splits experience bundles first and `sdk.ts` supplies block/event names at run time.
 - Open decisions: input format, whether output targets the Portal scripting API.
 
 ## Sample inputs
