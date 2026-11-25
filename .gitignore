@@ -1,6 +1,7 @@
 node_modules
 dist
 tmp
+out
 
 # EA-owned material: kept locally, never committed (see docs/golden.md)
 golden/

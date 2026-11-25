@@ -17,19 +17,44 @@ Portal are trademarks of Electronic Arts. This repository contains no EA code, S
 - The Battlefield 6 Portal SDK, installed separately. Set `PORTAL_SDK` to its folder (default `C:/PortalSDK`). Tested with
   SDK 2.1.2.0.
 
-## Usage
+## Quick start
 
-```sh
-npm install
-PORTAL_SDK=/path/to/PortalSDK npm run gen:sdk      # once: extracts API names from the SDK typings (git-ignored output)
-npm run emit -- <workspace.json> <out-base>        # writes <out-base>.ts and <out-base>.strings.json
-npm run typecheck:out -- <out-base>.ts             # type-check the result against the SDK
-```
+1. Install Node 22+ and the Portal SDK. Tell the tool where the SDK is (default `C:/PortalSDK`):
 
-Experience bundles (full editor exports) are split into workspace, spatial map and mutators with
-`npm run extract -- <bundle.json> [out-dir]`; convert the extracted `workspace.json` with `emit`.
+   ```sh
+   # PowerShell
+   $env:PORTAL_SDK = "D:/path/to/PortalSDK"
+   # macOS / Linux / Git Bash
+   export PORTAL_SDK=/path/to/PortalSDK
+   ```
 
-`npm test` runs the unit tests; checks that need the SDK or the local golden files skip when those are absent.
+2. Clone and install:
+
+   ```sh
+   git clone <this repo> && cd portal-rules
+   npm install
+   ```
+
+3. Convert a rules workspace (the first run also extracts API names from the SDK typings into the git-ignored
+   `src/generated/sdk.ts`):
+
+   ```sh
+   npm run emit -- "$PORTAL_SDK/GodotProject/mods/CustomRush/rush_template_4.0.json" out/rush
+   ```
+
+   This writes `out/rush.ts` (the script) and `out/rush.strings.json`. Use `$env:PORTAL_SDK` in PowerShell.
+
+4. Check the result compiles against the SDK typings:
+
+   ```sh
+   npm run typecheck:out -- out/rush.ts
+   ```
+
+Input must be a bare workspace (`{ "mod": { "blocks": ... } }`). For a full experience export (bundle), split it first with
+`npm run extract -- <bundle.json> <out-dir>` and convert the `workspace.json` it writes.
+
+`npm test` runs the tests; checks that need the SDK or the local golden files skip when those are absent. There is no
+published package or standalone CLI yet; everything runs through the npm scripts.
 
 ## Development
 

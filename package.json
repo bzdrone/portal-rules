@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "bin": {
-    "portal-rules": "dist/cli.js"
-  },
   "scripts": {
     "pretest": "node scripts/ensure-sdk.mjs",
     "prebuild": "node scripts/ensure-sdk.mjs",
@@ -18,7 +15,9 @@
     "typecheck:out": "node scripts/typecheck.mjs",
     "compare": "tsx scripts/compare.ts",
     "survey": "node scripts/survey.mjs",
-    "extract": "tsx scripts/extract.ts"
+    "extract": "tsx scripts/extract.ts",
+    "preemit": "node scripts/ensure-sdk.mjs",
+    "precompare": "node scripts/ensure-sdk.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.7",
@@ -27,5 +26,8 @@
     "vitest": "^5.1.1"
   },
   "description": "Convert Battlefield 6 Portal block rules into TypeScript",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  }
 }
