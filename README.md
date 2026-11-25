@@ -22,7 +22,7 @@ Portal are trademarks of Electronic Arts. This repository contains no EA code, S
 
 ## Use it in the browser
 
-Once GitHub Pages is enabled for this repo (Settings > Pages > Source: GitHub Actions), the converter is also a web page: pick the SDK's `code/types/mod/index.d.ts` once (it is kept in your browser only), drop in your experience export, and download the `.ts` and `.strings.json`. Nothing is uploaded. Build it locally with `npm run build:web` (output in `site/`).
+The converter is also a web page: **[bzdrone.github.io/portal-rules](https://bzdrone.github.io/portal-rules/)**. (Forks: enable Settings > Pages > Source: GitHub Actions.) On it, pick the SDK's `code/types/mod/index.d.ts` once (it is kept in your browser only), drop in your experience export, and download the `.ts` and `.strings.json`. Nothing is uploaded. Build it locally with `npm run build:web` (output in `site/`).
 
 ## Export a script
 

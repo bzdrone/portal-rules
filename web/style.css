@@ -4,6 +4,7 @@
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
 main{max-width:760px;margin:0 auto;padding:24px 16px 48px}
 h1{margin:0 0 4px}h2{font-size:1.15rem;margin:0 0 6px}h3{font-size:1rem}
+.links{margin:0 0 8px}
 .lead{color:var(--muted)}
 section{border-top:1px solid var(--line);padding:18px 0}
 .warn{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:8px;padding:10px 14px}
