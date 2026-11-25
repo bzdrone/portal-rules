@@ -85,6 +85,14 @@ This is the file the converter is compared against. Steps below were walked thro
      once): the preview was clean (95 declarations, hashes identical to the golden) and the saved script was again 110,090 bytes
      with 190 declarations; the saved strings file was identical to the golden. So the doubling reproduces with the normal
      path. How the existing Conquest golden came out clean is unknown (possibly a different editor version).
+   - Saving does not help; it makes it worse. After saving the draft (named, then reopened from the project list so the page
+     reloaded from the server), the blocks were intact but the very first Export to Script preview already had 390
+     declarations (119,604 bytes), and the strings hash no longer matched the golden. So the duplicated variables are stored in
+     the workspace: exporting appears to write the extra variables back into the draft's variable table, and saving keeps them.
+     A previously exported experience therefore stays polluted. That would explain the polluted Breakthrough and Rush goldens
+     (their experiences had been exported before), though that is an inference.
+   - Practical rule: only the first generation after a fresh import is clean. Use a new, unsaved draft, import once, read the
+     preview once, and discard the draft. Never reuse a draft that has been exported or saved.
    - Not yet tried: Breakthrough and Rush.
 
 The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
