@@ -2,7 +2,7 @@
 
 This repo does not contain Electronic Arts' material. The `golden/` folder, holding what EA's Portal exporter produced for the
 three templates plus the experience bundles those exports came from, is git-ignored and must be recreated on your machine.
-Without it the golden comparison and bundle tests skip. The Portal SDK itself is not vendored either: install it separately and
+Without it the golden comparison and bundle tests skip. The Portal SDK itself is not included in this repo either: install it separately and
 point `PORTAL_SDK` at it (default `C:/PortalSDK`). Tested against SDK 2.1.2.0 (`sdk.version.json`).
 
 ## Recreate `golden/` (Conquest walkthrough)

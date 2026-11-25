@@ -9,7 +9,7 @@ Converts BF6 Portal block rules logic into TypeScript.
 
 ## Sample inputs
 
-The Portal SDK is not vendored; reference it by path (machine-local, may differ elsewhere). Leave it unchanged.
+The Portal SDK is not included in this repo; reference it by path (machine-local, may differ elsewhere). Leave it unchanged.
 
 - SDK: `C:/PortalSDK`, version 2.1.2.0 (`sdk.version.json`).
 - Blockly rules sample: `C:/PortalSDK/GodotProject/mods/HybridExample/HybridExample.workspace.json` (paired hand-written `HybridExample.ts`); documentation only, not used in tests.

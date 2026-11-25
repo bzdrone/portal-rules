@@ -1,5 +1,5 @@
 // Names the converter needs from the Portal SDK typings (events, `mod.*` functions and enums), read at run time.
-// The SDK is not vendored (it is EA's); point PORTAL_SDK at an install, or pass a path to loadSdk.
+// The SDK is not included in this repo (it is EA's); point PORTAL_SDK at an install, or pass a path to loadSdk.
 import { existsSync, readFileSync } from "node:fs";
 
 export interface EventParam {
