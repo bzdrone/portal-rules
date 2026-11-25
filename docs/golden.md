@@ -84,9 +84,5 @@ golden/rush/{customrush_bundle.json, rush.*}
 Golden files are byte-exact: do not let git or an editor convert line endings (they are ignored by git, so this only matters
 if you copy them around).
 
-Then run `npm test` and `npm run compare`. Your exports may differ from the ones this project was developed against (a
-different SDK or editor version); differences are classified in `docs/divergences.md`, and the `known` lists in
-`scripts/cases.mjs` may need adjusting to match your exports.
-
 A golden is a reference, not ground truth: the exporter can have bugs. Small hand-built workspaces that isolate single block
 types would make better references than the full templates.
