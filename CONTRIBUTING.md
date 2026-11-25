@@ -21,9 +21,33 @@ bare clone (with fewer checks run).
 ## Where things are
 
 - `src/`: the library and CLI (`cli.ts`). Pipeline: `workspace.ts` (parse) -> `emit.ts` (TypeScript) with `strings.ts`;
-  `bundle.ts` splits experience bundles; `sdk.ts` reads block and event names from the SDK at run time.
+  `bundle.ts` splits experience bundles; `sdk.ts` reads block and event names from the SDK at run time (`sdk-core.ts` is the browser-safe part).
 - `test/`: Vitest tests. `scripts/`: developer tools (compare, survey, extract, typecheck). `docs/`: findings and decisions.
 - [AGENTS.md](AGENTS.md) has the full tooling table and working rules (it is also read by coding agents).
+
+## The web site
+
+`web/` is a static page that runs the converter in the browser (no server, nothing uploaded). It is published to GitHub Pages
+by `.github/workflows/pages.yml` on every push to `main`.
+
+- `web/app.ts`: the page logic. `web/index.html`, `web/style.css`: markup and styles.
+- Browser code must not import Node modules. It uses `src/convert.ts` and `src/sdk-core.ts` (the browser-safe SDK parsing);
+  `src/sdk.ts` and `src/cli.ts` are Node only. `tsconfig.web.json` has `types: []`, so a stray Node API fails the build.
+- The SDK is EA's and is not bundled. The visitor picks `code/types/mod/index.d.ts` from their own SDK install; the page keeps
+  it in the browser's IndexedDB. Do not commit SDK files or add them to the site.
+
+Build and try it locally:
+
+```sh
+npm run build:web
+```
+
+This writes the site to `site/` (git-ignored): `tsc` compiles the browser code to `site/js/`, and `index.html` and
+`style.css` are copied alongside. ES modules do not load from `file://`, so serve the folder over HTTP, for example
+`npx http-server site`, then open the address it prints. Pick the SDK's `index.d.ts`, then drop in an experience export
+or workspace `.json` and download the `.ts` and `.strings.json`.
+
+To publish from a fork or new repo, set Settings > Pages > Source to "GitHub Actions" once; the workflow does the rest.
 
 ## Checking your change
 
