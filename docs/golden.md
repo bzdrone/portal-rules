@@ -70,10 +70,14 @@ This is the file the converter is compared against. Steps below were walked thro
    Portal Custom draft): the strings file was byte-identical to the existing golden, and with variable names masked
    (`MASK_VARS=1 node scripts/gdiff.mjs`) every unit matched, but the script declared every variable twice (190 `const ... Var`
    lines against 95) with different indices, so unmasked 12 units differed (a variable name resolved to the wrong variable).
-   That is the "polluted variable table" seen in the Breakthrough and Rush goldens. It is not yet known whether the import
-   itself duplicates the variables or the import ran twice; check that the exported script has one declaration per variable
-   (`grep -c "^const .*Var = " <file>` should match the template's variable count, 95 for Conquest) and, if not, reset the
-   workspace and import once more before exporting.
+   That is the "polluted variable table" seen in the Breakthrough and Rush goldens.
+
+   The duplication grows with each export from the same page session: a second export of the same draft gave 390 declarations
+   (each of the 95 variables four times) with the strings file still identical. So the web exporter appears to append the
+   variable table every time it generates a script, not on import. Not yet established: whether a clean (single) table is
+   possible, for example by opening the Export dialog once right after a page load. Reloading the editor URL directly
+   (`/bf6/experience/rules/blocks`) does not restore the draft; it redirects to "Choose a game mode".
+   Check any export with `grep -c "^const .*Var = " <file>` (95 for Conquest) before using it as a golden.
 
 The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
 "Create new Strings file", icons **Manage Scripts**, **Generate Script from Blocks**, and a delete-all trash icon). You do not
