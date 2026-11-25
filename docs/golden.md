@@ -56,12 +56,18 @@ This is the file the converter is compared against. Steps below were walked thro
    **Import** / **Cancel**. Load the template workspace JSON (`<sdk>/GodotProject/mods/<folder>/<workspace file>`) and press
    **Import**. The template READMEs say the same ("import the included JSON of the template ... within the block editor via the
    Import button"). Do one template per fresh draft, so earlier workspaces do not leak into the variable table.
-6. Generate the script: **Export to Script** on the Blocks toolbar, or the **Script** page's "Generate Script from Blocks"
-   button *(not yet verified which produces the file, or where it appears)*.
-7. The **Script** page ("Edit Script") has "Create new Script file" and "Create new Strings file", an editor, and icons for
-   **Manage Scripts**, **Generate Script from Blocks** and a trash icon (delete all; do not click). Copy or download the
-   generated script and the strings file from there *(not yet verified: exact download control and file names)*.
-8. Save them as `golden/<mode>/<mode>.ts` and `golden/<mode>/<mode>.strings.json`.
+6. After the import the template's rules show in the workspace (for Conquest, the first rule is "Initialise").
+   Click **Export to Script** on the Blocks toolbar. A dialog "Export to Script" opens, with a note ("Import these files on
+   the Rules Editor 'Script' page to apply them to your Experience") and a warning that script conversion may be imperfect.
+   It previews the generated script (`import * as modlib from 'modlib';` first), with filename `script-conversion.ts`,
+   and the generated strings, with filename `strings-conversion.json`. Press **Export** to save the two files (Cancel closes
+   the dialog without saving). Nothing needs to be published.
+7. Copy them into place, renamed: `script-conversion.ts` to `golden/<mode>/<mode>.ts` and `strings-conversion.json` to
+   `golden/<mode>/<mode>.strings.json`. *(Not yet verified: where the browser saves them, and that Export saves both.)*
+
+The Script page ("Edit Script") is where those two files are imported back into an experience ("Create new Script file",
+"Create new Strings file", icons **Manage Scripts**, **Generate Script from Blocks**, and a delete-all trash icon). You do not
+need it to produce the golden files.
 
 Do one workspace per fresh session. The Breakthrough and Rush exports used so far came from a session that had other workspaces
 loaded and have polluted variable tables (duplicate `const` names, raw numeric variable indices). If yours are polluted the
