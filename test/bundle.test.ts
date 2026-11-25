@@ -28,6 +28,7 @@ const bundles = [
 const haveGolden = existsSync(golden);
 
 describe.skipIf(!haveGolden).each(bundles)("%s bundle", (_name, file, mutators, spatialName) => {
+  if (!haveGolden) return; // suite bodies still run when skipped
   const bundle = parseBundle(readFileSync(join(golden, file), "utf8"));
   const parts = extractBundle(bundle);
 
@@ -71,6 +72,7 @@ it("rejects a plain workspace as a bundle", () => {
 
 // golden/<mode>/<mode>.spatial.json and .mutators.json are extracted from the bundle (npm run extract -- ... --name <mode>); keep them in sync.
 describe.skipIf(!haveGolden).each(bundles)("%s golden files", (name, file) => {
+  if (!haveGolden) return;
   const bundle = parseBundle(readFileSync(join(golden, file), "utf8"));
   const parts = extractBundle(bundle);
   const dir = join(golden, name);

@@ -14,7 +14,9 @@ const golden = join(import.meta.dirname, "../golden");
 
 
 // golden/ is git-ignored EA material (docs/golden.md): skip when absent.
-describe.skipIf(!existsSync(mods) || !existsSync(golden))("EA golden outputs", () => {
+const haveRefs = existsSync(mods) && existsSync(golden);
+describe.skipIf(!haveRefs)("EA golden outputs", () => {
+  if (!haveRefs) return; // suite bodies still run when skipped
   for (const c of allCases.filter((c: { dir?: string }) => c.dir)) {
     describe(c.name, () => {
       const result = emitWorkspace(parseWorkspace(readFileSync(join(mods, c.input), "utf8")));

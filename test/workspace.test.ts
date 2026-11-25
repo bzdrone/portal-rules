@@ -27,6 +27,7 @@ describe.skipIf(!existsSync(mods))("SDK workspaces", () => {
 // The experience bundles exported from the editor embed the rules workspace. They must convert exactly like the SDK templates
 // (block ids and layout differ, the rules do not).
 describe.skipIf(!existsSync(mods) || !existsSync(join(import.meta.dirname, "../golden")))("experience bundles", () => {
+  // the body only reads files inside it(), so it is safe to run when skipped
   const bundles: [string, string, string][] = [
     ["conquest", "conquest/customconquest_bundle.json", templates.conquest],
     ["breakthrough", "breakthrough/custombreakthrough_bundle.json", templates.breakthrough],
