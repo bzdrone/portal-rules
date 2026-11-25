@@ -49,6 +49,8 @@ or workspace `.json` and download the `.ts` and `.strings.json`.
 
 To publish from a fork or new repo, set Settings > Pages > Source to "GitHub Actions" once; the workflow does the rest.
 
+If a deploy fails at `deploy-pages` with "Failed to create deployment (status: 500)", that is GitHub's side, not the workflow (the build step passed). Try again later: re-run the failed run (`gh run rerun <id>`, or "Re-run all jobs" in the Actions tab). The API itself can return 500 for a while; retry rather than change the workflow.
+
 ## Checking your change
 
 | Command | Does |
