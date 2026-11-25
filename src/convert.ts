@@ -11,3 +11,17 @@ export function convertText(text: string): EmitResult {
   const workspace = json.workspace && !json.mod ? extractBundle(parseBundle(text)).workspace : parseWorkspace(text);
   return emitWorkspace(workspace);
 }
+
+/** The maps attached to a bundle, exactly as encoded (byte-exact), with distinct file names. A plain workspace has none. */
+export function bundleMaps(text: string): { filename: string; text: string }[] {
+  const json = JSON.parse(text) as Record<string, unknown>;
+  if (!json.workspace || json.mod) return [];
+  const maps = extractBundle(parseBundle(text)).spatial;
+  const taken = new Set<string>();
+  return maps.map((m, i) => {
+    let filename = m.filename;
+    if (taken.has(filename)) filename = filename.replace(/(\.[^.]+)?$/, `.${m.mapIdx ?? i}$1`);
+    taken.add(filename);
+    return { filename, text: m.text };
+  });
+}

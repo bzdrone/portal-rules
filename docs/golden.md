@@ -46,7 +46,7 @@ experience.)
 npm run extract -- golden/conquest/customconquest_bundle.json golden/conquest --name conquest
 ```
 
-This writes `conquest.spatial.json` (byte-exact) and `conquest.mutators.json`. The map is `MP_FireStorm`.
+The user-facing version of this step (including the web page) is "Get the map" in the [README](../README.md#get-the-map-optional). This writes `conquest.spatial.json` (byte-exact) and `conquest.mutators.json`. The map is `MP_FireStorm`.
 
 ### 4. Check it
 

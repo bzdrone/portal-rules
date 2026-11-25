@@ -54,6 +54,25 @@ block and event names; nothing from it is copied.
    In the web builder, add them on the **Rules Editor > Script** page ("Create new Script file" and "Create new Strings
    file").
 
+### Get the map (optional)
+
+An experience export also contains the map data attached to the experience (the capture points, HQs, spawn points and other
+objects placed on the map), as a spatial `.json` file. The converter does not need it. Tools that want the map's objects,
+such as a simulator that runs your script, do.
+
+- **On the web page:** if the export has a map, a download button for it appears next to the script downloads.
+- **On the command line:** this writes the map (`<map>.spatial.json`, exactly as stored in the export), plus the rules workspace, the mutators and
+  the experience details, into a folder:
+
+  ```sh
+  npm run extract -- "C:\Users\me\Downloads\my-experience_experience.json" "C:\Users\me\Downloads\my-experience-parts"
+  ```
+
+The map comes out byte for byte as it is stored in the export. We checked one web builder export and one SDK editor export of
+each template; both kinds contain it, but a different export may not. The web builder also stores an empty script and
+an empty blacklist beside the map, which are not maps and are skipped. Contributors: see
+[docs/golden.md](docs/golden.md) for how extraction is used there.
+
 Optional check that the script compiles against the SDK typings:
 
 ```sh

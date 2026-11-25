@@ -1,5 +1,5 @@
 // Browser front end: load the SDK typings (kept in IndexedDB), convert a dropped experience export, offer downloads.
-import { convertText, type EmitResult } from "../src/convert.js";
+import { bundleMaps, convertText, type EmitResult } from "../src/convert.js";
 import { parseSdkTypings, useSdk, type SdkData } from "../src/sdk-core.js";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -67,7 +67,7 @@ const download = (name: string, text: string) => {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
-function show(base: string, r: EmitResult) {
+function show(base: string, r: EmitResult, maps: { filename: string; text: string }[]) {
   const strings = `${JSON.stringify(r.strings, null, 2)}\n`;
   $("summary").textContent = `Converted ${base}: ${r.ts.split("\n").length} lines, ${Object.keys(r.strings).length} strings, ${r.diagnostics.length} warning(s).`;
   const ts = $<HTMLButtonElement>("dl-ts");
@@ -76,6 +76,14 @@ function show(base: string, r: EmitResult) {
   st.textContent = `Download ${base}.strings.json`;
   ts.onclick = () => download(`${base}.ts`, r.ts);
   st.onclick = () => download(`${base}.strings.json`, strings);
+  $("map-list").replaceChildren(
+    ...maps.map((m) => {
+      const b = Object.assign(document.createElement("button"), { type: "button", textContent: `Download ${m.filename}` });
+      b.onclick = () => download(m.filename, m.text); // exactly as encoded in the export
+      return b;
+    }),
+  );
+  $("maps").hidden = !maps.length;
   const list = $("diag-list");
   list.replaceChildren(...r.diagnostics.map((d) => Object.assign(document.createElement("li"), { textContent: d })));
   $("diagnostics").hidden = !r.diagnostics.length;
@@ -88,7 +96,8 @@ async function convertFile(file: File) {
   $("result").hidden = true;
   if (!sdkReady) return showError("Load the SDK typings first (step 1).");
   try {
-    show(file.name.replace(/\.[^.]+$/, ""), convertText(await file.text()));
+    const text = await file.text();
+    show(file.name.replace(/\.[^.]+$/, ""), convertText(text), bundleMaps(text));
   } catch (err) {
     showError(`${file.name} is not a Portal workspace or experience bundle: ${(err as Error).message}`);
   }
